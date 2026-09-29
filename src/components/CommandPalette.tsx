@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, X, Code2, Zap, Terminal, FileText, ArrowRight, Github, Mail, Volume2, VolumeX, Briefcase, Eye, Sparkles } from 'lucide-react';
+import { Search, X, Code2, Zap, Terminal, FileText, ArrowRight, Github, Mail, Volume2, VolumeX, Briefcase, Eye, Sparkles, Globe as GlobeIcon } from 'lucide-react';
 import { soundService } from '../services/sound';
 
 interface CommandPaletteProps {
@@ -150,6 +150,30 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       handler: () => {
         onClose();
         const el = document.getElementById('systems-lab');
+        el?.scrollIntoView({ behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'nav-stream',
+      category: 'Navigation',
+      title: 'Systems Dispatches Stream (Infinite Scroll)',
+      subtitle: 'Dynamic stream of Go runtime, PostGIS, and systems engineering logs',
+      icon: <FileText className="w-4 h-4 text-indigo-400" />,
+      handler: () => {
+        onClose();
+        const el = document.getElementById('engineering-stream');
+        el?.scrollIntoView({ behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'nav-globe',
+      category: 'Navigation',
+      title: 'Real-World 3D Geolocation Globe',
+      subtitle: 'HTML5 GPS location detection, OpenStreetMap reverse geocoding & Kisumu link',
+      icon: <GlobeIcon className="w-4 h-4 text-emerald-400" />,
+      handler: () => {
+        onClose();
+        const el = document.getElementById('interactive-globe');
         el?.scrollIntoView({ behavior: 'smooth' });
       },
     },

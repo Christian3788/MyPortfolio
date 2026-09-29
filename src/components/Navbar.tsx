@@ -65,6 +65,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           <a href="#engineering-stream" className="hover:text-white transition-colors text-indigo-300">
             Stream
           </a>
+          <a href="#interactive-globe" className="hover:text-white transition-colors text-emerald-400">
+            3D Globe
+          </a>
           <a href="#research" className="hover:text-white transition-colors">
             Research
           </a>

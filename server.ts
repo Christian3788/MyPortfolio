@@ -170,6 +170,65 @@ Respond with valid JSON conforming to:
   }
 });
 
+// 3. Newsletter Subscription Mock Backend
+interface Subscriber {
+  id: string;
+  email: string;
+  topics?: string[];
+  createdAt: string;
+}
+
+const subscribers: Subscriber[] = [
+  { id: 'sub-1', email: 'alex.systems@kernel.org', topics: ['go', 'systems'], createdAt: new Date(Date.now() - 86400000 * 5).toISOString() },
+  { id: 'sub-2', email: 'sarah.infra@stripe.com', topics: ['go', 'databases'], createdAt: new Date(Date.now() - 86400000 * 3).toISOString() },
+  { id: 'sub-3', email: 'dmitri.go@uber.com', topics: ['go'], createdAt: new Date(Date.now() - 86400000 * 2).toISOString() },
+  { id: 'sub-4', email: 'maria.spatial@mapbox.com', topics: ['databases'], createdAt: new Date(Date.now() - 86400000 * 1).toISOString() },
+];
+
+app.post('/api/newsletter', (req, res) => {
+  try {
+    const { email, topics = ['all'] } = req.body || {};
+    if (!email || typeof email !== 'string' || !email.includes('@') || !email.includes('.')) {
+      return res.status(400).json({ error: 'Please provide a valid email address.' });
+    }
+
+    const normalized = email.trim().toLowerCase();
+    const exists = subscribers.find((s) => s.email === normalized);
+    if (exists) {
+      return res.status(200).json({
+        success: true,
+        alreadySubscribed: true,
+        message: 'You are already subscribed to Christian Amos\'s technical dispatches!',
+        totalSubscribers: subscribers.length + 140,
+      });
+    }
+
+    const newSub: Subscriber = {
+      id: `sub-${Date.now()}`,
+      email: normalized,
+      topics,
+      createdAt: new Date().toISOString(),
+    };
+    subscribers.push(newSub);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Successfully subscribed! You will receive future technical article dispatches.',
+      totalSubscribers: subscribers.length + 140,
+    });
+  } catch (err) {
+    console.error('Newsletter subscription error:', err);
+    return res.status(500).json({ error: 'Failed to process subscription.' });
+  }
+});
+
+app.get('/api/newsletter/stats', (_req, res) => {
+  return res.json({
+    totalSubscribers: subscribers.length + 140,
+    activeTopics: ['Go Concurrency & 206 Streaming', 'PostGIS & Spatial SQL', 'Zone01 Peer Defense', 'Kernel & I/O'],
+  });
+});
+
 async function startServer() {
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.resolve(__dirname, 'dist')));

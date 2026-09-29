@@ -11,6 +11,7 @@ import { SkillsSection } from './components/SkillsSection';
 import { ArticlesSection } from './components/ArticlesSection';
 import { ResearchInterestsSection } from './components/ResearchInterestsSection';
 import { DynamicInfiniteScrollStream } from './components/DynamicInfiniteScrollStream';
+import { Interactive3DGlobe } from './components/Interactive3DGlobe';
 import { FloatingAiVoiceAssistant } from './components/FloatingAiVoiceAssistant';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
@@ -175,7 +176,10 @@ export default function App() {
         {/* 09. Dynamic Infinite Scroll Systems Dispatches Feed */}
         <DynamicInfiniteScrollStream />
 
-        {/* 10. Interactive Collaboration & Contact Dispatch */}
+        {/* 10. Interactive 3D Globe · Real Geolocation & Telemetry Hub */}
+        <Interactive3DGlobe />
+
+        {/* 11. Interactive Collaboration & Contact Dispatch */}
         <ContactSection user={currentUser} />
       </main>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Github, Send, Check, MapPin, Building, Calendar, ArrowUpRight, Clock, Globe, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Mail, Github, Send, Check, MapPin, Building, Calendar, ArrowUpRight, Clock, Globe, Sparkles, CheckCircle2, Bell, Newspaper, ShieldCheck, Loader2 } from 'lucide-react';
 import { GithubUser } from '../types/github';
 import { soundService } from '../services/sound';
 
@@ -14,11 +14,99 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ user }) => {
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
+  // Newsletter Subscription States
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterTopics, setNewsletterTopics] = useState<string[]>(['go', 'databases']);
+  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'loading' | 'success' | 'already-subscribed' | 'error'>('idle');
+  const [newsletterMsg, setNewsletterMsg] = useState('');
+  const [subscriberCount, setSubscriberCount] = useState<number>(144);
+
   // Timezone Overlap States
   const [visitorTimezone, setVisitorTimezone] = useState<string>('UTC');
   const [visitorLocalTime, setVisitorLocalTime] = useState<string>('');
   const [christianTime, setChristianTime] = useState<string>('');
   const [isWithinWorkingHours, setIsWithinWorkingHours] = useState<boolean>(true);
+
+  // Check existing newsletter subscription and fetch stats on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('portfolio_newsletter_subscribed');
+      if (saved) {
+        setNewsletterStatus('already-subscribed');
+        setNewsletterMsg(`Subscribed with ${saved}`);
+      }
+
+      fetch('/api/newsletter/stats')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data?.totalSubscribers) {
+            setSubscriberCount(data.totalSubscribers);
+          }
+        })
+        .catch(() => {
+          // Keep default count
+        });
+    } catch {
+      // LocalStorage or fetch fallback
+    }
+  }, []);
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = newsletterEmail.trim().toLowerCase();
+    if (!trimmed || !trimmed.includes('@') || !trimmed.includes('.')) {
+      setNewsletterStatus('error');
+      setNewsletterMsg('Please enter a valid email address.');
+      soundService.playClick(160, 0.04);
+      return;
+    }
+
+    setNewsletterStatus('loading');
+    soundService.playClick(260, 0.02);
+
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: trimmed, topics: newsletterTopics }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.alreadySubscribed) {
+          setNewsletterStatus('already-subscribed');
+          setNewsletterMsg(data.message || 'You are already subscribed!');
+        } else {
+          setNewsletterStatus('success');
+          setNewsletterMsg(data.message || 'Subscribed! You will receive future technical article dispatches.');
+          if (data.totalSubscribers) setSubscriberCount(data.totalSubscribers);
+        }
+        localStorage.setItem('portfolio_newsletter_subscribed', trimmed);
+        soundService.playSuccess();
+      } else {
+        throw new Error('Server error');
+      }
+    } catch {
+      // Local mock backend fallback if offline
+      localStorage.setItem('portfolio_newsletter_subscribed', trimmed);
+      const existing = JSON.parse(localStorage.getItem('mock_newsletter_db') || '[]');
+      if (!existing.includes(trimmed)) {
+        existing.push(trimmed);
+        localStorage.setItem('mock_newsletter_db', JSON.stringify(existing));
+        setSubscriberCount((prev) => prev + 1);
+      }
+      setNewsletterStatus('success');
+      setNewsletterMsg('Subscribed! You will receive future technical article dispatches.');
+      soundService.playSuccess();
+    }
+  };
+
+  const toggleTopic = (topic: string) => {
+    soundService.playClick(240, 0.015);
+    setNewsletterTopics((prev) =>
+      prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic]
+    );
+  };
 
   useEffect(() => {
     try {
@@ -378,6 +466,136 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ user }) => {
             </div>
           </div>
 
+        </div>
+
+        {/* Technical Articles & Systems Newsletter Subscription Section */}
+        <div className="mt-12 rounded-2xl bg-gradient-to-b from-[#0e111c] to-[#090b14] border border-white/[0.1] p-6 sm:p-8 relative overflow-hidden shadow-2xl">
+          {/* Subtle accent glow */}
+          <div className="absolute top-0 right-0 w-80 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative z-10">
+            {/* Left copy & topic tags */}
+            <div className="max-w-xl space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="flex items-center justify-center w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400">
+                  <Newspaper className="w-3.5 h-3.5" />
+                </span>
+                <span className="text-xs font-mono font-semibold uppercase tracking-wider text-indigo-400">
+                  Technical Articles &amp; Systems Architecture Memo
+                </span>
+              </div>
+
+              <h4 className="text-xl sm:text-2xl font-bold text-white font-display">
+                Subscribe to Systems Architecture Updates
+              </h4>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                Receive notification alerts whenever Christian publishes a new deep-dive on Go socket streaming, PostGIS Hilbert spatial indexing, or Zone01 peer-defended concurrency patterns. Zero marketing fluff.
+              </p>
+
+              {/* Topic Selectors */}
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <span className="text-[11px] font-mono text-slate-400">Topics:</span>
+                {[
+                  { id: 'go', label: 'Go 206 Streaming' },
+                  { id: 'databases', label: 'PostGIS & Spatial SQL' },
+                  { id: 'systems', label: 'Zone01 Peer Audits' },
+                ].map((topic) => {
+                  const active = newsletterTopics.includes(topic.id);
+                  return (
+                    <button
+                      key={topic.id}
+                      type="button"
+                      onClick={() => toggleTopic(topic.id)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-colors border ${
+                        active
+                          ? 'bg-indigo-600/30 border-indigo-500/60 text-indigo-200'
+                          : 'bg-white/[0.03] border-white/[0.08] text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      {active ? '✓ ' : '+ '}
+                      {topic.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Right Form / Subscription Status */}
+            <div className="w-full lg:max-w-md">
+              {newsletterStatus === 'success' || newsletterStatus === 'already-subscribed' ? (
+                <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 space-y-2 animate-in fade-in duration-300">
+                  <div className="flex items-center gap-2 font-mono font-bold text-xs">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span>{newsletterStatus === 'already-subscribed' ? 'Already Subscribed' : 'Subscription Confirmed!'}</span>
+                  </div>
+                  <p className="text-xs text-emerald-200/90 font-mono">
+                    {newsletterMsg}
+                  </p>
+                  <div className="flex items-center justify-between pt-1 border-t border-emerald-500/20 text-[11px] font-mono text-emerald-400/80">
+                    <span>Active subscriber count: {subscriberCount}</span>
+                    <button
+                      onClick={() => {
+                        setNewsletterStatus('idle');
+                        setNewsletterEmail('');
+                      }}
+                      className="underline hover:text-white"
+                    >
+                      Change email
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <form onSubmit={handleNewsletterSubmit} className="space-y-2.5">
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="relative flex-1">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                      <input
+                        type="email"
+                        required
+                        value={newsletterEmail}
+                        onChange={(e) => setNewsletterEmail(e.target.value)}
+                        placeholder="engineer@company.com"
+                        className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-black/50 border border-white/[0.12] text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors font-mono"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={newsletterStatus === 'loading'}
+                      className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white text-xs sm:text-sm font-semibold transition-all shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 whitespace-nowrap cursor-pointer"
+                    >
+                      {newsletterStatus === 'loading' ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span>Subscribing...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Bell className="w-3.5 h-3.5" />
+                          <span>Subscribe</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {newsletterStatus === 'error' && (
+                    <p className="text-xs font-mono text-rose-400">
+                      {newsletterMsg}
+                    </p>
+                  )}
+
+                  <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
+                    <span className="flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Zero spam · One-click unsubscribe</span>
+                    </span>
+                    <span className="text-indigo-400 font-semibold">
+                      {subscriberCount}+ engineers joined
+                    </span>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </section>

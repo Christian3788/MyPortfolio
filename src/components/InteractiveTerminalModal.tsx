@@ -70,6 +70,7 @@ export const InteractiveTerminalModal: React.FC<InteractiveTerminalModalProps> =
             <div><span className="text-white font-bold">projects</span> - List flagship systems & case studies</div>
             <div><span className="text-white font-bold">skills</span> - Display architecture & language matrix</div>
             <div><span className="text-white font-bold">defense</span> - View Zone01 peer-defended pull requests & audit proof</div>
+            <div><span className="text-white font-bold">globe</span> - Inspect 3D planetary geolocation & telemetry link to Kisumu</div>
             <div><span className="text-white font-bold">bench</span> - Run live in-browser SIMD benchmark</div>
             <div><span className="text-white font-bold">stress</span> - Simulate 1,000 concurrent goroutine load</div>
             <div><span className="text-white font-bold">bloom [key]</span> - Check membership in 32-bit Bloom filter</div>
@@ -111,6 +112,18 @@ export const InteractiveTerminalModal: React.FC<InteractiveTerminalModalProps> =
             <div><span className="text-indigo-400">Languages:</span> Go, TypeScript, JavaScript, Python 3, SQL, HTML/CSS, Bash</div>
             <div><span className="text-indigo-400">Databases:</span> PostgreSQL, PostGIS (GiST Indexing), Prisma, Redis, MinIO</div>
             <div><span className="text-indigo-400">Frameworks:</span> Next.js, React, Docker, Linux, WebSockets, HTTP 206</div>
+          </div>
+        );
+        break;
+
+      case 'globe':
+        output = (
+          <div className="space-y-1.5 text-xs font-mono">
+            <div className="text-emerald-400 font-bold">[3D PLANETARY GEOLOCATION HUB]</div>
+            <div>▸ Reference Station: Christian Amos Systems Lab (Kisumu, Kenya · -0.0917°, 34.7680°)</div>
+            <div>▸ Geolocation Provider: HTML5 navigator.geolocation + OpenStreetMap Nominatim reverse geocoder</div>
+            <div>▸ 3D Projection: WebGL react-globe.gl with NASA Blue Marble / Night Lights texture layers</div>
+            <div className="text-indigo-300">Run &apos;exit&apos; and navigate to the 3D Globe section on the page to view your live GPS position and geodesic telemetry.</div>
           </div>
         );
         break;
