@@ -6,9 +6,12 @@ import { SystemsLabSection } from './components/SystemsLabSection';
 import { RepositoriesGrid } from './components/RepositoriesGrid';
 import { ContributionGraph } from './components/ContributionGraph';
 import { ExperienceTimeline } from './components/ExperienceTimeline';
+import { PeerCodeDefenseSection } from './components/PeerCodeDefenseSection';
 import { SkillsSection } from './components/SkillsSection';
 import { ArticlesSection } from './components/ArticlesSection';
 import { ResearchInterestsSection } from './components/ResearchInterestsSection';
+import { DynamicInfiniteScrollStream } from './components/DynamicInfiniteScrollStream';
+import { FloatingAiVoiceAssistant } from './components/FloatingAiVoiceAssistant';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { ProjectDetailModal } from './components/ProjectDetailModal';
@@ -157,7 +160,10 @@ export default function App() {
         {/* 05. Career Experience Timeline & Peer-Defended Apprenticeship */}
         <ExperienceTimeline history={experience} />
 
-        {/* 06. Technical Competencies Matrix */}
+        {/* 06. Zone01 Peer Code Defense & Architecture Reviews */}
+        <PeerCodeDefenseSection />
+
+        {/* 07. Technical Competencies Matrix */}
         <SkillsSection />
 
         {/* 07. Technical Writing & Publications */}
@@ -166,12 +172,18 @@ export default function App() {
         {/* 08. Computational Inquiries & Scientific Roots (Gravitational Lensing) */}
         <ResearchInterestsSection />
 
-        {/* 09. Interactive Collaboration & Contact Dispatch */}
+        {/* 09. Dynamic Infinite Scroll Systems Dispatches Feed */}
+        <DynamicInfiniteScrollStream />
+
+        {/* 10. Interactive Collaboration & Contact Dispatch */}
         <ContactSection user={currentUser} />
       </main>
 
       {/* Quiet, Clean Footer */}
       <Footer user={currentUser} />
+
+      {/* Floating AI Voice Assistant */}
+      <FloatingAiVoiceAssistant />
 
       {/* Project / Repo Deep Dive Modal */}
       <ProjectDetailModal

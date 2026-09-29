@@ -56,8 +56,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           <a href="#experience" className="hover:text-white transition-colors">
             Experience
           </a>
+          <a href="#peer-defense" className="hover:text-white transition-colors text-emerald-400">
+            Peer Defense
+          </a>
           <a href="#articles" className="hover:text-white transition-colors">
             Articles
+          </a>
+          <a href="#engineering-stream" className="hover:text-white transition-colors text-indigo-300">
+            Stream
           </a>
           <a href="#research" className="hover:text-white transition-colors">
             Research

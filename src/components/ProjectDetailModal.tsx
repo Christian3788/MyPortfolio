@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { X, Copy, Check, ExternalLink, Code2, Server, Terminal, ArrowUpRight, Database, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { X, Copy, Check, ExternalLink, Code2, Server, Terminal, ArrowUpRight, Database, AlertCircle, CheckCircle2, Layers } from 'lucide-react';
 import { FeaturedProject, GithubRepo } from '../types/github';
 import { githubService } from '../services/github';
 import { AudioVisualizerWidget } from './AudioVisualizerWidget';
 import { GisSimulatorWidget } from './GisSimulatorWidget';
+import { ArchitectureTopologyModal } from './ArchitectureTopologyModal';
 
 interface ProjectDetailModalProps {
   project?: FeaturedProject | null;
@@ -19,6 +20,7 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
   const [copiedCode, setCopiedCode] = useState(false);
   const [readmeContent, setReadmeContent] = useState<string | null>(null);
   const [loadingReadme, setLoadingReadme] = useState(false);
+  const [isTopologyOpen, setIsTopologyOpen] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -221,18 +223,35 @@ export const ProjectDetailModal: React.FC<ProjectDetailModalProps> = ({
                 ))}
               </div>
 
-              {project.githubUrl && (
-                <a
-                  href={project.githubUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors"
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsTopologyOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-200 bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] rounded-lg transition-colors font-mono"
                 >
-                  <span>View Repository</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </a>
-              )}
+                  <Layers className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Inspect Architecture Blueprint</span>
+                </button>
+
+                {project.githubUrl && (
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors"
+                  >
+                    <span>View Repository</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </a>
+                )}
+              </div>
             </div>
+
+            {/* Architecture Topology Blueprint Modal */}
+            <ArchitectureTopologyModal
+              project={project}
+              isOpen={isTopologyOpen}
+              onClose={() => setIsTopologyOpen(false)}
+            />
 
           </div>
         ) : repo ? (

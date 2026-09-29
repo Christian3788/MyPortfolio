@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Atom, Move, RefreshCw } from 'lucide-react';
+import { Atom, Move, RefreshCw, Sparkles, Sliders, Info, Zap } from 'lucide-react';
 
 interface Star {
   x: number;
@@ -8,109 +8,169 @@ interface Star {
   color: string;
 }
 
+interface AccretionParticle {
+  angle: number;
+  distance: number;
+  speed: number;
+  size: number;
+  hue: number;
+}
+
 export const GravitationalLensingSimulator: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [lensPos, setLensPos] = useState({ x: 250, y: 75 });
+  const [lensPos, setLensPos] = useState({ x: 250, y: 80 });
+  const [mass, setMass] = useState<number>(4.2); // Solar masses
+  const [showAccretion, setShowAccretion] = useState<boolean>(true);
   const [isDragging, setIsDragging] = useState(false);
   const starsRef = useRef<Star[]>([]);
+  const particlesRef = useRef<AccretionParticle[]>([]);
+  const animRef = useRef<number | null>(null);
 
   // Generate starfield once
   useEffect(() => {
     const stars: Star[] = [];
-    const colors = ['#ffffff', '#e0e7ff', '#c7d2fe', '#fef08a', '#bae6fd'];
-    for (let i = 0; i < 90; i++) {
+    const colors = ['#ffffff', '#e0e7ff', '#c7d2fe', '#fef08a', '#bae6fd', '#fed7aa'];
+    for (let i = 0; i < 110; i++) {
       stars.push({
-        x: Math.random() * 500,
-        y: Math.random() * 160,
-        radius: Math.random() * 1.5 + 0.5,
+        x: Math.random() * 600,
+        y: Math.random() * 200,
+        radius: Math.random() * 1.5 + 0.4,
         color: colors[Math.floor(Math.random() * colors.length)],
       });
     }
     starsRef.current = stars;
+
+    // Generate orbiting accretion disk particles
+    const particles: AccretionParticle[] = [];
+    for (let i = 0; i < 48; i++) {
+      particles.push({
+        angle: Math.random() * Math.PI * 2,
+        distance: 18 + Math.random() * 32,
+        speed: 0.02 + (1 / (15 + Math.random() * 20)) * 0.4,
+        size: Math.random() * 1.6 + 0.6,
+        hue: 200 + Math.random() * 50,
+      });
+    }
+    particlesRef.current = particles;
   }, []);
 
-  // Render loop
+  // Continuous animation loop for orbiting matter and lensing
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const w = canvas.width;
-    const h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
+    const render = () => {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
 
-    // Deep space background
-    ctx.fillStyle = '#04050a';
-    ctx.fillRect(0, 0, w, h);
+      // Deep space void
+      ctx.fillStyle = '#04050a';
+      ctx.fillRect(0, 0, w, h);
 
-    // Render background grid lines
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
-    ctx.lineWidth = 1;
-    for (let x = 0; x < w; x += 30) {
+      // Celestial coordinate grid lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.025)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < w; x += 30) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = 0; y < h; y += 30) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      // Einstein radius scaled to mass parameter: theta_E ~ sqrt(M)
+      const einsteinRadius = 18 + mass * 6.5;
+      const einsteinRadiusSq = einsteinRadius * einsteinRadius;
+
+      // 1. Deflect background stars via General Relativity equation
+      starsRef.current.forEach((star) => {
+        const dx = star.x - lensPos.x;
+        const dy = star.y - lensPos.y;
+        const distSq = dx * dx + dy * dy;
+        const dist = Math.sqrt(distSq);
+
+        // Inside event horizon
+        if (dist < 8 + mass * 0.8) return;
+
+        // Gravitational deflection vector: theta = 4GM / (c^2 * r)
+        const deflection = einsteinRadiusSq / (distSq + 24);
+        const defX = star.x + dx * deflection * 0.48;
+        const defY = star.y + dy * deflection * 0.48;
+
+        ctx.beginPath();
+        ctx.arc(defX, defY, star.radius, 0, Math.PI * 2);
+        ctx.fillStyle = star.color;
+        ctx.shadowColor = star.color;
+        ctx.shadowBlur = dist < einsteinRadius * 1.4 ? 6 : 1;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      // 2. Render Relativistic Accretion Disk (Keplerian orbits with Doppler boost)
+      if (showAccretion) {
+        particlesRef.current.forEach((p) => {
+          p.angle += p.speed * (mass / 3);
+          const px = lensPos.x + Math.cos(p.angle) * p.distance;
+          const py = lensPos.y + Math.sin(p.angle) * (p.distance * 0.38); // Inclination foreshortening
+
+          // Relativistic Doppler beaming: approaching particles appear brighter and bluer
+          const isApproaching = Math.sin(p.angle) > 0;
+          const brightness = isApproaching ? 0.95 : 0.35;
+
+          ctx.beginPath();
+          ctx.arc(px, py, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = `hsla(${p.hue}, 90%, ${isApproaching ? '75%' : '45%'}, ${brightness})`;
+          ctx.shadowColor = `hsl(${p.hue}, 90%, 65%)`;
+          ctx.shadowBlur = isApproaching ? 5 : 1;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        });
+      }
+
+      // 3. Einstein Ring / Photon Sphere boundary
       ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, h);
+      ctx.arc(lensPos.x, lensPos.y, einsteinRadius, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
+      ctx.lineWidth = 1.5;
       ctx.stroke();
-    }
-    for (let y = 0; y < h; y += 30) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
-    }
 
-    const einsteinRadius = 36;
-    const einsteinRadiusSq = einsteinRadius * einsteinRadius;
-
-    // Deflect and draw each star
-    starsRef.current.forEach((star) => {
-      const dx = star.x - lensPos.x;
-      const dy = star.y - lensPos.y;
-      const distSq = dx * dx + dy * dy;
-      const dist = Math.sqrt(distSq);
-
-      if (dist < 4) return; // Inside event horizon
-
-      // Gravitational deflection vector: theta = 4GM / (c^2 * r)
-      const deflection = (einsteinRadiusSq / (distSq + 20));
-      const defX = star.x + dx * deflection * 0.45;
-      const defY = star.y + dy * deflection * 0.45;
+      // 4. Black Hole Event Horizon (Schwarzschild radius)
+      const rs = 8 + mass * 1.1;
+      const grad = ctx.createRadialGradient(lensPos.x, lensPos.y, 1, lensPos.x, lensPos.y, rs + 6);
+      grad.addColorStop(0, '#000000');
+      grad.addColorStop(0.75, '#000000');
+      grad.addColorStop(0.9, 'rgba(15, 23, 42, 0.8)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
 
       ctx.beginPath();
-      ctx.arc(defX, defY, star.radius, 0, Math.PI * 2);
-      ctx.fillStyle = star.color;
-      ctx.shadowColor = star.color;
-      ctx.shadowBlur = dist < einsteinRadius * 1.5 ? 6 : 1;
+      ctx.arc(lensPos.x, lensPos.y, rs + 6, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
       ctx.fill();
-      ctx.shadowBlur = 0;
-    });
 
-    // Draw Einstein Ring / Photon Sphere boundary
-    ctx.beginPath();
-    ctx.arc(lensPos.x, lensPos.y, einsteinRadius, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+      // 5. Photon Ring Inner Border
+      ctx.beginPath();
+      ctx.arc(lensPos.x, lensPos.y, rs, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(199, 210, 254, 0.85)';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
 
-    // Event Horizon (Black hole core)
-    const grad = ctx.createRadialGradient(lensPos.x, lensPos.y, 2, lensPos.x, lensPos.y, 14);
-    grad.addColorStop(0, '#000000');
-    grad.addColorStop(0.8, '#000000');
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
+      animRef.current = requestAnimationFrame(render);
+    };
 
-    ctx.beginPath();
-    ctx.arc(lensPos.x, lensPos.y, 14, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.fill();
+    render();
 
-    // Subtle accretion glow
-    ctx.beginPath();
-    ctx.arc(lensPos.x, lensPos.y, 16, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(129, 140, 248, 0.6)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  }, [lensPos]);
+    return () => {
+      if (animRef.current) cancelAnimationFrame(animRef.current);
+    };
+  }, [lensPos, mass, showAccretion]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
     setIsDragging(true);
@@ -129,38 +189,112 @@ export const GravitationalLensingSimulator: React.FC = () => {
 
   const updatePos = (e: React.PointerEvent<HTMLCanvasElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = Math.max(20, Math.min(rect.width - 20, (e.clientX - rect.left) * (500 / rect.width)));
-    const y = Math.max(20, Math.min(rect.height - 20, (e.clientY - rect.top) * (160 / rect.height)));
+    const x = Math.max(30, Math.min(570, (e.clientX - rect.left) * (600 / rect.width)));
+    const y = Math.max(30, Math.min(170, (e.clientY - rect.top) * (200 / rect.height)));
     setLensPos({ x, y });
   };
 
+  const resetPosition = () => {
+    setLensPos({ x: 300, y: 100 });
+    setMass(4.2);
+  };
+
+  // Schwarzschild radius formula: Rs = 2GM/c^2
+  const calcRsKm = (mass * 2.95).toFixed(1);
+  const calcEinsteinThetaArcsec = (mass * 1.84).toFixed(2);
+
   return (
-    <div className="rounded-xl bg-[#07080c] border border-white/[0.08] p-4 space-y-3">
-      <div className="flex items-center justify-between text-xs font-mono">
-        <div className="flex items-center gap-2 text-slate-300">
-          <Atom className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Schwarzschild Gravitational Lensing Simulator</span>
+    <div className="rounded-xl bg-[#07080c] border border-white/[0.08] p-4 sm:p-5 space-y-4">
+      
+      {/* Header with Title & Reset */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
+        <div className="flex items-center gap-2 text-slate-200">
+          <Atom className="w-4 h-4 text-indigo-400" />
+          <span className="font-semibold text-white">General Relativity · Gravitational Lensing Canvas</span>
         </div>
-        <div className="flex items-center gap-2 text-[11px] text-slate-400">
-          <Move className="w-3 h-3 text-slate-500" />
-          <span>Drag mass ({Math.round(lensPos.x)}, {Math.round(lensPos.y)})</span>
+        <div className="flex items-center gap-3">
+          <span className="text-[11px] text-slate-400">
+            Singularity at ({Math.round(lensPos.x)}, {Math.round(lensPos.y)})
+          </span>
+          <button
+            onClick={resetPosition}
+            className="p-1 rounded text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] transition-colors"
+            title="Reset Mass Coordinates"
+          >
+            <RefreshCw className="w-3 h-3" />
+          </button>
         </div>
       </div>
 
-      <div className="relative w-full rounded-lg overflow-hidden border border-white/[0.06] cursor-grab active:cursor-grabbing">
+      {/* Interactive Simulation Canvas */}
+      <div className="relative w-full rounded-lg overflow-hidden border border-white/[0.08] cursor-grab active:cursor-grabbing shadow-inner">
         <canvas
           ref={canvasRef}
-          width={500}
-          height={160}
+          width={600}
+          height={200}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
-          className="w-full h-36 object-cover block"
+          className="w-full h-44 object-cover block"
         />
-        <div className="absolute bottom-2 left-2 text-[10px] text-slate-500 font-mono pointer-events-none">
-          Click and drag the central gravitational singularity to bend background star trajectories
+
+        {/* Floating Canvas Overlays */}
+        <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded bg-black/60 backdrop-blur-md border border-white/10 text-[10px] text-slate-300 font-mono">
+          <Move className="w-3 h-3 text-indigo-400" />
+          <span>Drag mass to bend light rays in real time</span>
+        </div>
+
+        <div className="absolute bottom-2 right-2 z-10 px-2 py-0.5 rounded bg-black/70 backdrop-blur-md border border-indigo-500/30 text-[10px] text-indigo-300 font-mono">
+          <span>θ_E = {calcEinsteinThetaArcsec}″ · R_s = {calcRsKm} km</span>
         </div>
       </div>
+
+      {/* Physics Controls & Mathematical Telemetry */}
+      <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center text-xs font-mono pt-1">
+        
+        {/* Mass Slider */}
+        <div className="sm:col-span-6 space-y-1.5">
+          <div className="flex justify-between text-slate-400">
+            <span>Stellar Mass (M_☉):</span>
+            <span className="text-white font-bold">{mass.toFixed(1)} M_☉</span>
+          </div>
+          <input
+            type="range"
+            min="1.0"
+            max="10.0"
+            step="0.2"
+            value={mass}
+            onChange={(e) => setMass(Number(e.target.value))}
+            className="w-full accent-indigo-500 bg-slate-800 rounded-lg cursor-pointer h-1.5"
+          />
+        </div>
+
+        {/* Accretion Disk Toggle */}
+        <div className="sm:col-span-6 flex items-center justify-between sm:justify-end gap-3">
+          <label className="flex items-center gap-2 cursor-pointer text-slate-300 hover:text-white">
+            <input
+              type="checkbox"
+              checked={showAccretion}
+              onChange={(e) => setShowAccretion(e.target.checked)}
+              className="accent-indigo-500 rounded cursor-pointer"
+            />
+            <span className="text-[11px]">Accretion Disk Doppler Boost</span>
+          </label>
+        </div>
+
+      </div>
+
+      {/* Formula & Method Note */}
+      <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.04] text-[11px] font-mono text-slate-400 space-y-1">
+        <div className="text-slate-300 font-medium">Relativistic Ray-Tracing Formulation:</div>
+        <div>
+          $\hat&#123;\alpha&#125; = \frac&#123;4GM&#125;&#123;c^2 b&#125;$ · Einstein Ring Radius: $\theta_E = \sqrt&#123;\frac&#123;4GM&#125;&#123;c^2&#125; \frac&#123;D_&#123;LS&#125;&#125;&#123;D_L D_S&#125;&#125;$
+        </div>
+        <div className="text-slate-500 text-[10px]">
+          Simulates null geodesic bending around a static Schwarzschild metric with Keplerian accretion velocities.
+        </div>
+      </div>
+
     </div>
   );
 };

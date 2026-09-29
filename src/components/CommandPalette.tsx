@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, X, Code2, Zap, Terminal, FileText, ArrowRight, Github, Mail, Volume2, VolumeX, Briefcase, Eye } from 'lucide-react';
+import { Search, X, Code2, Zap, Terminal, FileText, ArrowRight, Github, Mail, Volume2, VolumeX, Briefcase, Eye, Sparkles } from 'lucide-react';
 import { soundService } from '../services/sound';
 
 interface CommandPaletteProps {
@@ -13,7 +13,7 @@ interface CommandPaletteProps {
 
 interface ActionItem {
   id: string;
-  category: 'Navigation' | 'Systems Lab' | 'Persona' | 'Actions';
+  category: 'Navigation' | 'Systems Lab' | 'Persona' | 'Actions' | 'Zone01 Mastery' | 'Astrophysics Research';
   title: string;
   subtitle: string;
   icon: React.ReactNode;
@@ -78,6 +78,42 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       handler: () => {
         onClose();
         const el = document.getElementById('featured');
+        el?.scrollIntoView({ behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'lab-stress',
+      category: 'Systems Lab',
+      title: 'Run Concurrency Stress Benchmark',
+      subtitle: 'Simulate 1,000 goroutines on Go HTTP 206 vs Naive Buffering',
+      icon: <Zap className="w-4 h-4 text-amber-400" />,
+      handler: () => {
+        onClose();
+        const el = document.getElementById('systems-lab');
+        el?.scrollIntoView({ behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'nav-peer-defense',
+      category: 'Zone01 Mastery',
+      title: 'Peer Code Defense Replay',
+      subtitle: 'Inspect PR review critiques, defense rationale, and benchmark proof',
+      icon: <Code2 className="w-4 h-4 text-emerald-400" />,
+      handler: () => {
+        onClose();
+        const el = document.getElementById('peer-defense');
+        el?.scrollIntoView({ behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'nav-lensing',
+      category: 'Astrophysics Research',
+      title: 'Gravitational Lensing Canvas',
+      subtitle: 'Interactive Schwarzschild null geodesic ray-tracing',
+      icon: <Sparkles className="w-4 h-4 text-indigo-400" />,
+      handler: () => {
+        onClose();
+        const el = document.getElementById('research');
         el?.scrollIntoView({ behavior: 'smooth' });
       },
     },

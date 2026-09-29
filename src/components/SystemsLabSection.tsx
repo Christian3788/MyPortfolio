@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Cpu, Zap, Activity, HardDrive, Terminal, Play, RotateCcw, Check, AlertCircle, Sparkles, Layers } from 'lucide-react';
 import { soundService } from '../services/sound';
+import { StressTestBenchmarkLab } from './StressTestBenchmarkLab';
 
 export const SystemsLabSection: React.FC = () => {
   // === 1. SIMD Benchmark State ===
@@ -228,9 +229,12 @@ export const SystemsLabSection: React.FC = () => {
             </h2>
           </div>
           <p className="text-sm text-slate-400 max-w-md">
-            Live in-browser simulations of SIMD vector loop unrolling, Bloom filter bitsets, 64-byte L1 cache-line allocation, and Go channel concurrency.
+            Live in-browser simulations of high-concurrency Go streaming, PostGIS GiST spatial indexing, SIMD vector unrolling, and memory allocation.
           </p>
         </div>
+
+        {/* Flagship Stress-Test & Concurrency Benchmark Lab */}
+        <StressTestBenchmarkLab />
 
         {/* 2x2 Interactive Lab Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
