@@ -1,0 +1,293 @@
+import React, { useState, useEffect } from 'react';
+import { Search, X, Code2, Zap, Terminal, FileText, ArrowRight, Github, Mail, Volume2, VolumeX, Briefcase, Eye } from 'lucide-react';
+import { soundService } from '../services/sound';
+
+interface CommandPaletteProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelectProject: (id: string) => void;
+  onOpenResume: () => void;
+  onOpenSync: () => void;
+  onSwitchPersona: (persona: 'tech-lead' | 'recruiter') => void;
+}
+
+interface ActionItem {
+  id: string;
+  category: 'Navigation' | 'Systems Lab' | 'Persona' | 'Actions';
+  title: string;
+  subtitle: string;
+  icon: React.ReactNode;
+  handler: () => void;
+}
+
+export const CommandPalette: React.FC<CommandPaletteProps> = ({
+  isOpen,
+  onClose,
+  onSelectProject,
+  onOpenResume,
+  onOpenSync,
+  onSwitchPersona,
+}) => {
+  const [query, setQuery] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [soundState, setSoundState] = useState(soundService.isEnabled());
+
+  const actions: ActionItem[] = [
+    {
+      id: 'proj-lyric',
+      category: 'Navigation',
+      title: 'LYRIC – Audio Streaming Platform',
+      subtitle: 'Go HTTP 206 Byte-Range & WebSocket Sync',
+      icon: <Code2 className="w-4 h-4 text-indigo-400" />,
+      handler: () => {
+        onClose();
+        const el = document.getElementById('featured');
+        el?.scrollIntoView({ behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'proj-spatial',
+      category: 'Navigation',
+      title: 'Spatial Risk Analytics Engine',
+      subtitle: 'PostGIS GiST Spatial Indexing Simulator',
+      icon: <Code2 className="w-4 h-4 text-indigo-400" />,
+      handler: () => {
+        onClose();
+        const el = document.getElementById('featured');
+        el?.scrollIntoView({ behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'proj-vector',
+      category: 'Navigation',
+      title: 'Vector-Vanguard Engine',
+      subtitle: 'SIMD 4-Way Loop Unrolled Nearest Neighbor Search',
+      icon: <Zap className="w-4 h-4 text-indigo-400" />,
+      handler: () => {
+        onClose();
+        const el = document.getElementById('featured');
+        el?.scrollIntoView({ behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'proj-kijiji',
+      category: 'Navigation',
+      title: 'kijijiShare Platform',
+      subtitle: 'Hyperlocal gift economy & atomic reservations',
+      icon: <Code2 className="w-4 h-4 text-indigo-400" />,
+      handler: () => {
+        onClose();
+        const el = document.getElementById('featured');
+        el?.scrollIntoView({ behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'lab-simd',
+      category: 'Systems Lab',
+      title: 'Run Vector SIMD Benchmark',
+      subtitle: 'Live in-browser float32 distance performance delta',
+      icon: <Zap className="w-4 h-4 text-emerald-400" />,
+      handler: () => {
+        onClose();
+        const el = document.getElementById('systems-lab');
+        el?.scrollIntoView({ behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'lab-bloom',
+      category: 'Systems Lab',
+      title: 'Bloom Filter Playground',
+      subtitle: 'Interactive 32-bit array with 3 hash functions',
+      icon: <Terminal className="w-4 h-4 text-indigo-400" />,
+      handler: () => {
+        onClose();
+        const el = document.getElementById('systems-lab');
+        el?.scrollIntoView({ behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'lab-heap',
+      category: 'Systems Lab',
+      title: '64-Byte Cache-Line Memory Allocator',
+      subtitle: 'Simulate malloc, free, and GC memory compaction',
+      icon: <Terminal className="w-4 h-4 text-indigo-400" />,
+      handler: () => {
+        onClose();
+        const el = document.getElementById('systems-lab');
+        el?.scrollIntoView({ behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'persona-tech',
+      category: 'Persona',
+      title: 'Switch to Tech Lead View',
+      subtitle: 'Focus on low-overhead network I/O, Go, and PostGIS',
+      icon: <Eye className="w-4 h-4 text-cyan-400" />,
+      handler: () => {
+        onSwitchPersona('tech-lead');
+        onClose();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'persona-recruiter',
+      category: 'Persona',
+      title: 'Switch to Recruiter View',
+      subtitle: 'Focus on full-stack web platforms and Zone01 mastery',
+      icon: <Briefcase className="w-4 h-4 text-indigo-400" />,
+      handler: () => {
+        onSwitchPersona('recruiter');
+        onClose();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'action-resume',
+      category: 'Actions',
+      title: 'View & Download CV (PDF / JSON)',
+      subtitle: 'Detailed experience, education, and skills',
+      icon: <FileText className="w-4 h-4 text-indigo-400" />,
+      handler: () => {
+        onClose();
+        onOpenResume();
+      },
+    },
+    {
+      id: 'action-sound',
+      category: 'Actions',
+      title: soundState ? 'Disable Audio Click Haptics' : 'Enable Audio Click Haptics',
+      subtitle: 'Subtle Web Audio API synthesizer feedback',
+      icon: soundState ? <VolumeX className="w-4 h-4 text-slate-400" /> : <Volume2 className="w-4 h-4 text-indigo-400" />,
+      handler: () => {
+        const next = !soundState;
+        soundService.setEnabled(next);
+        setSoundState(next);
+        if (next) soundService.playSuccess();
+      },
+    },
+    {
+      id: 'action-sync',
+      category: 'Actions',
+      title: 'GitHub Switcher & Token Settings',
+      subtitle: 'Sync any GitHub user or enter access token',
+      icon: <Github className="w-4 h-4 text-indigo-400" />,
+      handler: () => {
+        onClose();
+        onOpenSync();
+      },
+    },
+  ];
+
+  const filtered = actions.filter(
+    (a) =>
+      a.title.toLowerCase().includes(query.toLowerCase()) ||
+      a.subtitle.toLowerCase().includes(query.toLowerCase()) ||
+      a.category.toLowerCase().includes(query.toLowerCase())
+  );
+
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [query]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setSelectedIndex((prev) => (prev + 1) % (filtered.length || 1));
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setSelectedIndex((prev) => (prev - 1 + filtered.length) % (filtered.length || 1));
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (filtered[selectedIndex]) {
+          filtered[selectedIndex].handler();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, filtered, selectedIndex, onClose]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-150"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-2xl rounded-2xl bg-[#0e1017] border border-white/[0.14] shadow-2xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Search Input Bar */}
+        <div className="flex items-center px-4 py-3.5 border-b border-white/[0.08] bg-[#07080c]">
+          <Search className="w-4 h-4 text-indigo-400 mr-3 shrink-0" />
+          <input
+            type="text"
+            autoFocus
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Type a command or search systems, benchmarks, repos..."
+            className="w-full bg-transparent text-sm text-white placeholder-slate-500 focus:outline-none font-mono"
+          />
+          <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] text-slate-500 bg-white/[0.04] border border-white/[0.08] rounded font-mono">
+            ESC
+          </kbd>
+        </div>
+
+        {/* Action Items List */}
+        <div className="max-h-96 overflow-y-auto p-2 space-y-1">
+          {filtered.length === 0 ? (
+            <div className="py-12 text-center text-xs text-slate-500 font-mono">
+              No matching commands found for "{query}".
+            </div>
+          ) : (
+            filtered.map((item, idx) => (
+              <div
+                key={item.id}
+                onClick={() => item.handler()}
+                onMouseEnter={() => setSelectedIndex(idx)}
+                className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition-colors ${
+                  idx === selectedIndex
+                    ? 'bg-indigo-600/20 text-white border border-indigo-500/30'
+                    : 'text-slate-300 hover:bg-white/[0.03] border border-transparent'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-white/[0.04] shrink-0">
+                    {item.icon}
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-white font-mono">
+                      {item.title}
+                    </div>
+                    <div className="text-[11px] text-slate-400">
+                      {item.subtitle}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-[10px] font-mono text-slate-500">
+                  <span>{item.category}</span>
+                  <ArrowRight className="w-3 h-3 text-slate-600" />
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Footer shortcuts */}
+        <div className="px-4 py-2.5 bg-[#07080c] border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-slate-500">
+          <span>Navigate: ↑ ↓ · Select: ↵</span>
+          <span>Christian Amos Otieno · Systems Portfolio</span>
+        </div>
+      </div>
+    </div>
+  );
+};
