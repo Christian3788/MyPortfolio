@@ -26,8 +26,30 @@ import {
   Play,
   Square,
   BarChart3,
+  GitCommit,
+  GitBranch,
+  GitPullRequest,
+  ExternalLink,
+  Code2,
+  Terminal,
+  ZoomIn,
+  ZoomOut,
+  Eye,
+  Pause,
+  RotateCcw,
+  Cpu,
+  Copy,
+  Check,
+  Building2,
+  Flame,
 } from 'lucide-react';
 import { soundService } from '../services/sound';
+import {
+  GITHUB_COMMIT_NODES,
+  REPO_METROPOLISES,
+  GitCommitNode,
+  RepoMetropolis,
+} from '../data/githubCommitsData';
 
 // -------------------------------------------------------------
 // Reference Coordinates & Data Constants
@@ -351,7 +373,7 @@ function interpolateGreatCircle(
   return points;
 }
 
-type ActiveFeatureTab = 'telemetry' | 'cables' | 'postgis' | 'flight' | 'hexbin';
+type ActiveFeatureTab = 'telemetry' | 'cables' | 'postgis' | 'flight' | 'hexbin' | 'commits';
 
 export const Interactive3DGlobe: React.FC = () => {
   const globeRef = useRef<GlobeMethods | undefined>(undefined);
@@ -406,6 +428,17 @@ export const Interactive3DGlobe: React.FC = () => {
   const [isFlying, setIsFlying] = useState<boolean>(false);
   const [flightProgress, setFlightProgress] = useState<number>(0);
   const flightIntervalRef = useRef<any>(null);
+
+  // 5. GitHub Commit Metropolis (Zoom LOD) State
+  const [selectedRepoId, setSelectedRepoId] = useState<string>('all');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCommit, setSelectedCommit] = useState<GitCommitNode | null>(null);
+  const [cameraAltitude, setCameraAltitude] = useState<number>(2.2);
+  const [isDuskPlaying, setIsDuskPlaying] = useState<boolean>(false);
+  const [duskIndex, setDuskIndex] = useState<number>(GITHUB_COMMIT_NODES.length - 1);
+  const [duskSpeed, setDuskSpeed] = useState<number>(1);
+  const [copiedSha, setCopiedSha] = useState<string | null>(null);
+  const duskIntervalRef = useRef<any>(null);
 
   // SSR protection
   useEffect(() => {
@@ -643,11 +676,98 @@ export const Interactive3DGlobe: React.FC = () => {
     if (globeRef.current) {
       const controls = globeRef.current.controls();
       if (controls) {
-        controls.autoRotate = autoRotate && !isFlying;
+        controls.autoRotate = autoRotate && !isFlying && activeTab !== 'commits';
         controls.autoRotateSpeed = 0.65;
       }
     }
-  }, [autoRotate, isFlying]);
+  }, [autoRotate, isFlying, activeTab]);
+
+  // Camera Altitude & Zoom LOD Tracker
+  useEffect(() => {
+    if (!globeRef.current) return;
+    const controls = globeRef.current.controls();
+    if (!controls) return;
+
+    const onControlsChange = () => {
+      const pov = globeRef.current?.pointOfView();
+      if (pov && typeof pov.altitude === 'number') {
+        setCameraAltitude(pov.altitude);
+      }
+    };
+
+    controls.addEventListener('change', onControlsChange);
+    return () => {
+      controls.removeEventListener('change', onControlsChange);
+    };
+  }, [isMounted]);
+
+  // Check if camera is zoomed close enough into city level
+  const isZoomedIntoCity = cameraAltitude <= 1.35 || activeTab === 'commits';
+
+  // Filtered commits by repository and category
+  const filteredCommits = useMemo(() => {
+    return GITHUB_COMMIT_NODES.filter((c) => {
+      const matchRepo = selectedRepoId === 'all' || c.repoId === selectedRepoId;
+      const matchCat = selectedCategory === 'all' || c.category === selectedCategory;
+      return matchRepo && matchCat;
+    });
+  }, [selectedRepoId, selectedCategory]);
+
+  // Active visible commits along the Dusk-to-Dawn timeline
+  const activeVisibleCommits = useMemo(() => {
+    if (duskIndex >= filteredCommits.length - 1) return filteredCommits;
+    return filteredCommits.slice(0, duskIndex + 1);
+  }, [filteredCommits, duskIndex]);
+
+  // Aggregate commit line metrics
+  const totalInsertions = useMemo(
+    () => activeVisibleCommits.reduce((acc, c) => acc + c.insertions, 0),
+    [activeVisibleCommits]
+  );
+  const totalDeletions = useMemo(
+    () => activeVisibleCommits.reduce((acc, c) => acc + c.deletions, 0),
+    [activeVisibleCommits]
+  );
+
+  // Toggle Dusk-to-Dawn sequential evolution replay
+  const toggleDuskToDawn = useCallback(() => {
+    if (isDuskPlaying) {
+      clearInterval(duskIntervalRef.current);
+      setIsDuskPlaying(false);
+      return;
+    }
+
+    soundService.playClick(320, 0.02);
+    setIsDuskPlaying(true);
+    let curr = duskIndex >= filteredCommits.length - 1 ? 0 : duskIndex;
+    setDuskIndex(curr);
+
+    const stepMs = Math.round(450 / duskSpeed);
+    duskIntervalRef.current = setInterval(() => {
+      curr++;
+      if (curr >= filteredCommits.length) {
+        clearInterval(duskIntervalRef.current);
+        setIsDuskPlaying(false);
+        soundService.playSuccess();
+        return;
+      }
+      setDuskIndex(curr);
+      soundService.playClick(260 + (curr % 6) * 35, 0.012);
+    }, stepMs);
+  }, [isDuskPlaying, duskIndex, filteredCommits.length, duskSpeed]);
+
+  useEffect(() => {
+    return () => {
+      if (duskIntervalRef.current) clearInterval(duskIntervalRef.current);
+    };
+  }, []);
+
+  const copyCommitSha = (sha: string) => {
+    navigator.clipboard.writeText(sha);
+    setCopiedSha(sha);
+    soundService.playSuccess();
+    setTimeout(() => setCopiedSha(null), 2500);
+  };
 
   // 3D Atmospheric Clouds layer using Three.js
   useEffect(() => {
@@ -912,6 +1032,40 @@ export const Interactive3DGlobe: React.FC = () => {
       type: 'sun',
     });
 
+    // 7. GitHub Repository Commits & Metropolises (Zoom LOD)
+    if (activeTab === 'commits' || isZoomedIntoCity) {
+      // Close-Up View: Render individual glowing 3D Commit Spires!
+      activeVisibleCommits.forEach((commit) => {
+        const isSelected = selectedCommit?.sha === commit.sha;
+        list.push({
+          lat: commit.lat,
+          lng: commit.lng,
+          size: isSelected ? commit.radius * 1.5 : commit.radius,
+          altitude: isSelected ? commit.altitude * 1.3 : commit.altitude,
+          color: isSelected ? '#ffffff' : commit.color,
+          label: `${commit.sha}: ${commit.message}`,
+          sublabel: `${commit.repoName} (${commit.branch}) · +${commit.insertions} -${commit.deletions} · ${commit.district}`,
+          type: 'commit',
+          commitData: commit,
+        });
+      });
+    } else {
+      // Orbital View: Render 4 Repository Capital Metropolises
+      REPO_METROPOLISES.forEach((repo) => {
+        list.push({
+          lat: repo.centerLat,
+          lng: repo.centerLng,
+          size: 0.85,
+          altitude: 0.05,
+          color: repo.color,
+          label: `🏙️ ${repo.name} Metropolis (${repo.totalCommits} Commits)`,
+          sublabel: `${repo.districtName} · ${repo.primaryLanguage} · Zoom in or select Commit Metropolis to enter 3D Skyline`,
+          type: 'repo_hub',
+          repoData: repo,
+        });
+      });
+    }
+
     return list;
   }, [
     userLocation,
@@ -921,6 +1075,9 @@ export const Interactive3DGlobe: React.FC = () => {
     fastestPoPId,
     postgisFilteredNodes,
     subsolarPoint,
+    isZoomedIntoCity,
+    activeVisibleCommits,
+    selectedCommit,
   ]);
 
   // Arcs Data for 3D Globe
@@ -970,8 +1127,33 @@ export const Interactive3DGlobe: React.FC = () => {
       });
     }
 
+    // If Commit Metropolis active: Draw elevated branch arteries linking commits within each repository!
+    if (activeTab === 'commits' || isZoomedIntoCity) {
+      const byRepo: { [key: string]: GitCommitNode[] } = {};
+      activeVisibleCommits.forEach((c) => {
+        if (!byRepo[c.repoId]) byRepo[c.repoId] = [];
+        byRepo[c.repoId].push(c);
+      });
+
+      Object.values(byRepo).forEach((repoCommits) => {
+        for (let i = 0; i < repoCommits.length - 1; i++) {
+          const c1 = repoCommits[i];
+          const c2 = repoCommits[i + 1];
+          arcs.push({
+            startLat: c1.lat,
+            startLng: c1.lng,
+            endLat: c2.lat,
+            endLng: c2.lng,
+            color: [c1.color, c2.color],
+            name: `${c1.repoName}: ${c1.sha} ➔ ${c2.sha}`,
+            altitude: 0.04,
+          });
+        }
+      });
+    }
+
     return arcs;
-  }, [userLocation, activeTab, edgePops]);
+  }, [userLocation, activeTab, edgePops, isZoomedIntoCity, activeVisibleCommits]);
 
   // Concentric Rings Data (Pulsing Beacons)
   const ringsData = useMemo(() => {
@@ -1013,8 +1195,35 @@ export const Interactive3DGlobe: React.FC = () => {
       });
     }
 
+    // Beacon on HEAD or Selected Commit in Commit Metropolis
+    if (activeTab === 'commits' || isZoomedIntoCity) {
+      activeVisibleCommits.forEach((commit) => {
+        if (commit.isHead || selectedCommit?.sha === commit.sha) {
+          rings.push({
+            lat: commit.lat,
+            lng: commit.lng,
+            maxR: 3.5,
+            propagationSpeed: 2.2,
+            repeatPeriod: 900,
+            color: (t: number) =>
+              commit.isHead
+                ? `rgba(16, 185, 129, ${Math.max(0, 1 - t)})`
+                : `rgba(255, 255, 255, ${Math.max(0, 1 - t)})`,
+          });
+        }
+      });
+    }
+
     return rings;
-  }, [userLocation, activeTab, postgisRadiusKm, postgisCenter]);
+  }, [
+    userLocation,
+    activeTab,
+    postgisRadiusKm,
+    postgisCenter,
+    isZoomedIntoCity,
+    activeVisibleCommits,
+    selectedCommit,
+  ]);
 
   // Undersea Submarine Cables Data for `pathsData`
   const pathsData = useMemo(() => {
@@ -1222,6 +1431,25 @@ export const Interactive3DGlobe: React.FC = () => {
             <BarChart3 className="w-3.5 h-3.5 text-amber-300" />
             <span>5. Global Contributor Hexbin Heatmap</span>
           </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('commits');
+              soundService.playClick(340, 0.02);
+              globeRef.current?.pointOfView(
+                { lat: KISUMU_COORDS.lat, lng: KISUMU_COORDS.lng, altitude: 0.52 },
+                2000
+              );
+            }}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
+              activeTab === 'commits'
+                ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 text-white font-bold shadow-md shadow-emerald-600/30'
+                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+            }`}
+          >
+            <GitCommit className="w-3.5 h-3.5 text-emerald-300" />
+            <span>6. GitHub Commit Metropolis (Zoom LOD)</span>
+          </button>
         </div>
 
         {/* Status Toast / Banner */}
@@ -1307,16 +1535,34 @@ export const Interactive3DGlobe: React.FC = () => {
               pointLat="lat"
               pointLng="lng"
               pointColor="color"
-              pointRadius="size"
-              pointAltitude={0.02}
+              pointRadius={(d: any) => d.size ?? 0.5}
+              pointAltitude={(d: any) => d.altitude ?? 0.02}
               pointLabel={(d: any) => `
-                <div style="font-family: monospace; padding: 7px 11px; background: rgba(9,11,20,0.95); border: 1px solid rgba(255,255,255,0.18); border-radius: 9px; color: #fff; font-size: 11px; backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
-                  <div style="font-weight: 700; color: ${d.color};">${d.label}</div>
-                  <div style="color: #94a3b8; font-size: 10px; margin-top: 2px;">${d.sublabel}</div>
+                <div style="font-family: monospace; padding: 8px 12px; background: rgba(9,11,20,0.96); border: 1px solid ${d.color || 'rgba(255,255,255,0.18)'}; border-radius: 9px; color: #fff; font-size: 11px; backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.6); max-width: 320px;">
+                  <div style="font-weight: 700; color: ${d.color}; display: flex; align-items: center; gap: 6px;">
+                    <span>${d.label}</span>
+                  </div>
+                  <div style="color: #94a3b8; font-size: 10px; margin-top: 3px; line-height: 1.4;">${d.sublabel}</div>
+                  ${d.type === 'commit' ? '<div style="margin-top: 5px; font-size: 9px; color: #38bdf8; font-weight: 600;">Click spire to inspect commit code diff &amp; GitHub link ➔</div>' : ''}
+                  ${d.type === 'repo_hub' ? '<div style="margin-top: 5px; font-size: 9px; color: #38bdf8; font-weight: 600;">Zoom in or click to enter 3D Commit Skyline ➔</div>' : ''}
                 </div>
               `}
               onPointClick={(point: any) => {
                 soundService.playClick(340, 0.02);
+                if (point.type === 'commit' && point.commitData) {
+                  setSelectedCommit(point.commitData);
+                  if (globeRef.current) {
+                    globeRef.current.pointOfView({ lat: point.lat, lng: point.lng, altitude: 0.38 }, 1400);
+                  }
+                  return;
+                }
+                if (point.type === 'repo_hub' && point.repoData) {
+                  setSelectedRepoId(point.repoData.id);
+                  if (globeRef.current) {
+                    globeRef.current.pointOfView({ lat: point.lat, lng: point.lng, altitude: 0.45 }, 1600);
+                  }
+                  return;
+                }
                 if (globeRef.current) {
                   globeRef.current.pointOfView({ lat: point.lat, lng: point.lng, altitude: 1.4 }, 1600);
                 }
@@ -1664,10 +1910,284 @@ export const Interactive3DGlobe: React.FC = () => {
                 </div>
               </div>
             )}
+
+            {/* TAB 6: GitHub Commit Metropolis & Zoom LOD */}
+            {activeTab === 'commits' && (
+              <div className="space-y-3">
+                {/* Header & Zoom LOD Badge */}
+                <div className="flex items-center justify-between pb-2 border-b border-white/[0.08]">
+                  <div className="flex items-center gap-2 text-emerald-400 font-bold">
+                    <GitCommit className="w-4 h-4 text-emerald-400 animate-pulse" />
+                    <span>GitHub Commit Metropolis</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-mono border ${
+                        isZoomedIntoCity
+                          ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
+                          : 'bg-indigo-950/40 border-indigo-500/40 text-indigo-300'
+                      }`}
+                    >
+                      {isZoomedIntoCity ? '🌆 Street Level' : '🛰️ Orbit View'}
+                    </span>
+                    <button
+                      onClick={() => {
+                        soundService.playClick(280, 0.02);
+                        if (isZoomedIntoCity) {
+                          globeRef.current?.pointOfView({ lat: 10, lng: 20, altitude: 2.4 }, 1600);
+                        } else {
+                          globeRef.current?.pointOfView(
+                            { lat: KISUMU_COORDS.lat, lng: KISUMU_COORDS.lng, altitude: 0.48 },
+                            1800
+                          );
+                        }
+                      }}
+                      className="px-2 py-0.5 rounded bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 text-[10px] flex items-center gap-1 cursor-pointer"
+                    >
+                      {isZoomedIntoCity ? <ZoomOut className="w-3 h-3" /> : <ZoomIn className="w-3 h-3" />}
+                      <span>{isZoomedIntoCity ? 'Zoom Out' : 'Fly In'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Repository Filter Buttons */}
+                <div className="space-y-1">
+                  <div className="text-[10px] text-slate-400 uppercase tracking-wider flex justify-between">
+                    <span>Repository Metropolis:</span>
+                    <span className="text-emerald-400 font-bold">{filteredCommits.length} Commits</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { id: 'all', label: 'All Repos', count: GITHUB_COMMIT_NODES.length },
+                      { id: 'lyric', label: 'LYRIC', count: 9 },
+                      { id: 'spatial-agritech', label: 'Spatial-Agritech', count: 8 },
+                      { id: 'kijijishare', label: 'KijijiShare', count: 7 },
+                      { id: 'vector-vanguard', label: 'Zone01 / SIMD', count: 7 },
+                    ].map((repo) => (
+                      <button
+                        key={repo.id}
+                        onClick={() => {
+                          setSelectedRepoId(repo.id);
+                          setDuskIndex(filteredCommits.length);
+                          soundService.playClick(240, 0.015);
+                          if (repo.id !== 'all') {
+                            const found = REPO_METROPOLISES.find((r) => r.id === repo.id);
+                            if (found && globeRef.current) {
+                              globeRef.current.pointOfView(
+                                { lat: found.centerLat, lng: found.centerLng, altitude: 0.45 },
+                                1400
+                              );
+                            }
+                          }
+                        }}
+                        className={`px-2 py-1 rounded-lg text-[10px] font-mono transition-all cursor-pointer border ${
+                          selectedRepoId === repo.id
+                            ? 'bg-emerald-600/30 border-emerald-500/60 text-emerald-200 font-bold'
+                            : 'bg-white/[0.03] border-white/[0.08] text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {repo.label} ({repo.count})
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Category Legend & Filter */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-1 text-[10px]">
+                  <span className="text-slate-500 uppercase mr-1">Types:</span>
+                  {[
+                    { id: 'all', label: 'All', color: '#94a3b8' },
+                    { id: 'perf', label: 'perf', color: '#10b981' },
+                    { id: 'feat', label: 'feat', color: '#06b6d4' },
+                    { id: 'arch', label: 'arch', color: '#818cf8' },
+                    { id: 'audit', label: 'audit', color: '#f59e0b' },
+                    { id: 'fix', label: 'fix', color: '#f43f5e' },
+                  ].map((cat) => (
+                    <button
+                      key={cat.id}
+                      onClick={() => {
+                        setSelectedCategory(cat.id);
+                        soundService.playClick(220, 0.015);
+                      }}
+                      className={`px-2 py-0.5 rounded text-[10px] font-mono border transition-all cursor-pointer ${
+                        selectedCategory === cat.id
+                          ? 'bg-white/[0.12] text-white border-white/30 font-bold'
+                          : 'bg-black/30 border-white/[0.06] text-slate-400 hover:text-white'
+                      }`}
+                      style={{ color: selectedCategory === cat.id ? '#fff' : cat.color }}
+                    >
+                      ● {cat.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* "Dusk-to-Dawn" Evolution Timeline Replay */}
+                <div className="p-2.5 rounded-xl bg-black/40 border border-white/[0.08] space-y-2">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={toggleDuskToDawn}
+                        className="p-1 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white cursor-pointer transition-all"
+                        title={isDuskPlaying ? 'Pause Evolution' : 'Replay Dusk-to-Dawn Timeline'}
+                      >
+                        {isDuskPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                      </button>
+                      <span className="font-bold text-white">Dusk-to-Dawn Evolution</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[10px] text-slate-400">
+                      <span>{duskIndex + 1} / {filteredCommits.length} spires</span>
+                      <button
+                        onClick={() => setDuskSpeed(duskSpeed === 1 ? 2 : 1)}
+                        className="px-1.5 py-0.5 rounded bg-white/[0.06] hover:bg-white/[0.1] text-emerald-400 font-mono text-[9px] cursor-pointer"
+                      >
+                        {duskSpeed}x
+                      </button>
+                    </div>
+                  </div>
+
+                  <input
+                    type="range"
+                    min="0"
+                    max={Math.max(0, filteredCommits.length - 1)}
+                    value={Math.min(duskIndex, filteredCommits.length - 1)}
+                    onChange={(e) => {
+                      const idx = parseInt(e.target.value, 10);
+                      setDuskIndex(idx);
+                      soundService.playClick(240, 0.01);
+                    }}
+                    className="w-full accent-emerald-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer"
+                  />
+
+                  <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 pt-0.5">
+                    <span className="text-emerald-400">+{totalInsertions} lines</span>
+                    <span className="text-rose-400">-{totalDeletions} lines</span>
+                    <span className="text-slate-300 truncate max-w-[130px]">
+                      {filteredCommits[Math.min(duskIndex, filteredCommits.length - 1)]?.date || '2024'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
+
+          {/* Holographic Commit Inspector Modal / Drawer */}
+          {selectedCommit && (
+            <div className="absolute top-4 right-4 sm:right-28 z-30 max-w-sm sm:max-w-md w-full p-4 rounded-2xl bg-[#090b14]/95 backdrop-blur-2xl border border-white/[0.15] shadow-2xl text-xs font-mono space-y-3 pointer-events-auto animate-in fade-in slide-in-from-right-4 duration-300">
+              {/* Header */}
+              <div className="flex items-center justify-between pb-2 border-b border-white/[0.08]">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
+                    style={{
+                      backgroundColor: `${selectedCommit.color}25`,
+                      color: selectedCommit.color,
+                      border: `1px solid ${selectedCommit.color}50`,
+                    }}
+                  >
+                    {selectedCommit.category}
+                  </span>
+                  <span className="font-bold text-white text-xs">{selectedCommit.repoName}</span>
+                  <span className="text-slate-400 text-[11px]">({selectedCommit.branch})</span>
+                </div>
+                <button
+                  onClick={() => setSelectedCommit(null)}
+                  className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-white/[0.1] transition-all cursor-pointer"
+                  title="Close Inspector"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Commit Message */}
+              <div>
+                <div className="text-[10px] text-slate-400 uppercase tracking-wider">Commit Message</div>
+                <div className="text-sm font-bold text-white font-sans mt-0.5">
+                  {selectedCommit.message}
+                </div>
+                <div className="text-[11px] text-slate-300 mt-1 leading-relaxed">
+                  {selectedCommit.detailedNotes}
+                </div>
+              </div>
+
+              {/* Code Diff Box */}
+              <div>
+                <div className="text-[10px] text-slate-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+                  <span>Introduced Architecture Diff</span>
+                  <span className="text-emerald-400 lowercase">{selectedCommit.language}</span>
+                </div>
+                <pre className="p-3 rounded-xl bg-black/80 border border-white/[0.08] text-emerald-300/90 text-[10.5px] font-mono overflow-x-auto leading-relaxed max-h-36 scrollbar-thin">
+                  <code>{selectedCommit.codeSnippet}</code>
+                </pre>
+              </div>
+
+              {/* Stats & Metadata Row */}
+              <div className="grid grid-cols-3 gap-2 pt-1 border-t border-white/[0.06] text-[10px]">
+                <div>
+                  <span className="text-slate-400">Insertions:</span>
+                  <div className="text-emerald-400 font-bold">+{selectedCommit.insertions}</div>
+                </div>
+                <div>
+                  <span className="text-slate-400">Deletions:</span>
+                  <div className="text-rose-400 font-bold">-{selectedCommit.deletions}</div>
+                </div>
+                <div>
+                  <span className="text-slate-400">Spire Altitude:</span>
+                  <div className="text-indigo-300 font-bold">{Math.round(selectedCommit.altitude * 1000)}m</div>
+                </div>
+              </div>
+
+              {/* Actions Footer */}
+              <div className="pt-2 border-t border-white/[0.08] flex items-center justify-between gap-2">
+                <button
+                  onClick={() => copyCommitSha(selectedCommit.sha)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white transition-all text-[11px] cursor-pointer"
+                >
+                  {copiedSha === selectedCommit.sha ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-emerald-400">Copied #{selectedCommit.sha}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5 text-slate-400" />
+                      <span>#{selectedCommit.sha}</span>
+                    </>
+                  )}
+                </button>
+
+                <a
+                  href={selectedCommit.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-all text-[11px] shadow-lg shadow-emerald-600/20"
+                >
+                  <span>View on GitHub</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+          )}
 
           {/* Camera Flight Buttons HUD (Top-Right) */}
           <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 pointer-events-auto">
+            {/* Commit City Shortcut */}
+            <button
+              onClick={() => {
+                if (!globeRef.current) return;
+                setActiveTab('commits');
+                soundService.playClick(340, 0.02);
+                setAutoRotate(false);
+                globeRef.current.pointOfView(
+                  { lat: KISUMU_COORDS.lat, lng: KISUMU_COORDS.lng, altitude: 0.48 },
+                  1800
+                );
+              }}
+              className="group flex items-center gap-2 px-3 py-2 rounded-xl bg-[#090b14]/90 backdrop-blur-md border border-emerald-500/40 text-xs font-mono text-emerald-300 hover:text-white hover:bg-emerald-950/40 transition-all shadow-lg cursor-pointer"
+              title="Fly camera directly into the 3D Commit Metropolis skyline"
+            >
+              <GitCommit className="w-3.5 h-3.5 text-emerald-400 group-hover:scale-110 transition-transform" />
+              <span className="hidden sm:inline">Commit City</span>
+            </button>
             {/* Fly to User */}
             <button
               onClick={() => {
@@ -1745,43 +2265,53 @@ export const Interactive3DGlobe: React.FC = () => {
         </div>
 
         {/* Feature Highlights Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
-          <div className="p-4 rounded-xl bg-[#080a12] border border-white/[0.08] space-y-1.5">
-            <div className="flex items-center gap-2 text-indigo-400 text-xs font-mono font-semibold">
-              <Activity className="w-4 h-4 text-indigo-400" />
-              <span>Global CDN &amp; PoP Telemetry</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 pt-2">
+          <div className="p-3.5 rounded-xl bg-[#080a12] border border-emerald-500/30 space-y-1.5 shadow-lg shadow-emerald-950/20">
+            <div className="flex items-center gap-2 text-emerald-400 text-xs font-mono font-semibold">
+              <GitCommit className="w-4 h-4 text-emerald-400" />
+              <span>Commit Metropolis</span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Live ping testing to 10 edge PoPs measuring packet flight time, jitter, and lowest-latency route selection.
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              Zoom LOD renders 31+ GitHub commits as glowing 3D skyscraper spires with dusk-to-dawn replay.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#080a12] border border-white/[0.08] space-y-1.5">
+          <div className="p-3.5 rounded-xl bg-[#080a12] border border-white/[0.08] space-y-1.5">
+            <div className="flex items-center gap-2 text-indigo-400 text-xs font-mono font-semibold">
+              <Activity className="w-4 h-4 text-indigo-400" />
+              <span>Edge PoP Telemetry</span>
+            </div>
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              Live ping testing to 10 edge PoPs measuring packet flight time, jitter, and lowest-latency route.
+            </p>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-[#080a12] border border-white/[0.08] space-y-1.5">
             <div className="flex items-center gap-2 text-cyan-400 text-xs font-mono font-semibold">
               <Network className="w-4 h-4 text-cyan-400" />
-              <span>Undersea Subsea Cables</span>
+              <span>Subsea Fiber Cables</span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-[11px] text-slate-400 leading-relaxed">
               3D pathways for 2Africa, SEACOM, and PEACE cables landing at Mombasa and routing into Kisumu.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#080a12] border border-white/[0.08] space-y-1.5">
-            <div className="flex items-center gap-2 text-emerald-400 text-xs font-mono font-semibold">
-              <Database className="w-4 h-4 text-emerald-400" />
-              <span>PostGIS ST_DWithin Lab</span>
+          <div className="p-3.5 rounded-xl bg-[#080a12] border border-white/[0.08] space-y-1.5">
+            <div className="flex items-center gap-2 text-teal-400 text-xs font-mono font-semibold">
+              <Database className="w-4 h-4 text-teal-400" />
+              <span>PostGIS Spatial Lab</span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Interactive spatial query radius slider filtering agricultural sensors with GiST R-Tree index verification.
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              Interactive radius slider filtering agricultural sensors with GiST R-Tree index verification.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#080a12] border border-white/[0.08] space-y-1.5">
+          <div className="p-3.5 rounded-xl bg-[#080a12] border border-white/[0.08] space-y-1.5">
             <div className="flex items-center gap-2 text-pink-400 text-xs font-mono font-semibold">
               <Plane className="w-4 h-4 text-pink-400" />
-              <span>Flight Sim &amp; Antipode Tunnel</span>
+              <span>Flight Sim &amp; Antipode</span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-[11px] text-slate-400 leading-relaxed">
               Cinematic low-altitude Great-Circle flyover camera into Kisumu and Earth core tunneling calculations.
             </p>
           </div>

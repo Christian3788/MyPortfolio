@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, X, Code2, Zap, Terminal, FileText, ArrowRight, Github, Mail, Volume2, VolumeX, Briefcase, Eye, Sparkles, Globe as GlobeIcon } from 'lucide-react';
+import { Search, X, Code2, Zap, Terminal, FileText, ArrowRight, Github, Mail, Volume2, VolumeX, Briefcase, Eye, Sparkles, Globe as GlobeIcon, GitCommit } from 'lucide-react';
 import { soundService } from '../services/sound';
 
 interface CommandPaletteProps {
@@ -171,6 +171,18 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       title: 'Real-World 3D Geolocation Globe',
       subtitle: 'HTML5 GPS location detection, OpenStreetMap reverse geocoding & Kisumu link',
       icon: <GlobeIcon className="w-4 h-4 text-emerald-400" />,
+      handler: () => {
+        onClose();
+        const el = document.getElementById('interactive-globe');
+        el?.scrollIntoView({ behavior: 'smooth' });
+      },
+    },
+    {
+      id: 'nav-commit-metropolis',
+      category: 'Navigation',
+      title: 'GitHub Commit Metropolis (3D Zoom LOD)',
+      subtitle: 'Inspect glowing 3D commit spires, dusk-to-dawn evolution, and architecture diffs',
+      icon: <GitCommit className="w-4 h-4 text-emerald-400" />,
       handler: () => {
         onClose();
         const el = document.getElementById('interactive-globe');

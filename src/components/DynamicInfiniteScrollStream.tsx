@@ -82,9 +82,12 @@ export const DynamicInfiniteScrollStream: React.FC = () => {
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const lastFetchTimeRef = useRef<number>(0);
 
   const fetchNextLogs = useCallback(async () => {
-    if (isLoadingMore) return;
+    const now = Date.now();
+    if (isLoadingMore || now - lastFetchTimeRef.current < 600) return;
+    lastFetchTimeRef.current = now;
     setIsLoadingMore(true);
 
     try {
