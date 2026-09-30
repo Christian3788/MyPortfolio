@@ -183,21 +183,21 @@ export const AudioVisualizerWidget: React.FC = () => {
   }, [isPlaying, filterFreq]);
 
   return (
-    <div className="rounded-xl bg-[#07080c] border border-white/[0.08] p-4 space-y-3.5 shadow-lg">
+    <div className="rounded-xl bg-white border border-slate-200/90 p-4 space-y-3.5 shadow-sm">
       
       {/* Header */}
       <div className="flex items-center justify-between text-xs font-mono">
-        <div className="flex items-center gap-2 text-slate-300">
-          <Activity className="w-3.5 h-3.5 text-indigo-400" />
+        <div className="flex items-center gap-2 text-slate-900 font-bold">
+          <Activity className="w-3.5 h-3.5 text-[#0059e8]" />
           <span>HTTP 206 Synthesizer &amp; Range Streamer</span>
         </div>
-        <span className="text-[11px] text-slate-400 font-mono">
+        <span className="text-[11px] text-slate-700 font-mono font-medium">
           {isPlaying ? `Chunks: ${chunksReceived} (${chunksReceived * 64} KB)` : '64KB Chunk Buffer'}
         </span>
       </div>
 
       {/* Canvas */}
-      <div className="relative w-full h-16 bg-[#040508] rounded-lg overflow-hidden border border-white/[0.04]">
+      <div className="relative w-full h-16 bg-slate-900 rounded-lg overflow-hidden border border-slate-800 shadow-inner">
         <canvas
           ref={canvasRef}
           width={400}
@@ -205,29 +205,29 @@ export const AudioVisualizerWidget: React.FC = () => {
           className="w-full h-full object-cover"
         />
         {!isPlaying && (
-          <div className="absolute inset-0 flex items-center justify-center text-[11px] text-slate-500 font-mono pointer-events-none">
+          <div className="absolute inset-0 flex items-center justify-center text-[11px] text-slate-200 font-mono font-medium pointer-events-none">
             Stream Idle · Press Play to hear Web Audio synthesis
           </div>
         )}
       </div>
 
       {/* Controls & Synthesis Panel */}
-      <div className="space-y-2 pt-1 border-t border-white/[0.06]">
+      <div className="space-y-2 pt-1 border-t border-slate-200">
         
         {/* Waveform Selector & Filter */}
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
           
           {/* Waveform Buttons */}
           <div className="flex items-center gap-1">
-            <span className="text-slate-500 text-[10px] mr-1">Wave:</span>
+            <span className="text-slate-700 font-medium text-[10px] mr-1">Wave:</span>
             {(['sine', 'triangle', 'sawtooth', 'square'] as WaveformType[]).map((w) => (
               <button
                 key={w}
                 onClick={() => setWaveform(w)}
-                className={`px-2 py-0.5 rounded text-[10px] uppercase font-mono transition-colors ${
+                className={`px-2 py-0.5 rounded text-[10px] uppercase font-mono transition-colors cursor-pointer ${
                   waveform === w
-                    ? 'bg-indigo-600 text-white font-bold'
-                    : 'bg-white/[0.03] text-slate-400 hover:text-white'
+                    ? 'bg-[#0059e8] text-white font-bold'
+                    : 'bg-slate-100 text-slate-700 hover:text-slate-900 font-semibold'
                 }`}
               >
                 {w.slice(0, 3)}
@@ -237,7 +237,7 @@ export const AudioVisualizerWidget: React.FC = () => {
 
           {/* Filter Cutoff Slider */}
           <div className="flex items-center gap-2">
-            <span className="text-slate-500 text-[10px]">Filter: {filterFreq}Hz</span>
+            <span className="text-slate-800 font-medium text-[10px]">Filter: {filterFreq}Hz</span>
             <input
               type="range"
               min="400"
@@ -245,7 +245,7 @@ export const AudioVisualizerWidget: React.FC = () => {
               step="200"
               value={filterFreq}
               onChange={(e) => setFilterFreq(Number(e.target.value))}
-              className="w-20 accent-indigo-500 bg-slate-800 rounded-lg cursor-pointer h-1"
+              className="w-20 accent-[#0059e8] bg-slate-200 rounded-lg cursor-pointer h-1"
             />
           </div>
 
@@ -256,10 +256,10 @@ export const AudioVisualizerWidget: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={togglePlayback}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors font-mono ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-colors font-mono cursor-pointer ${
                 isPlaying
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-white/[0.06] hover:bg-white/[0.12] text-slate-200'
+                  ? 'bg-[#0059e8] text-white shadow-xs'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
               }`}
             >
               {isPlaying ? <Square className="w-3 h-3 fill-current" /> : <Play className="w-3 h-3 fill-current" />}
@@ -269,7 +269,7 @@ export const AudioVisualizerWidget: React.FC = () => {
             {isPlaying && (
               <button
                 onClick={toggleMute}
-                className="p-1.5 text-slate-400 hover:text-white rounded bg-white/[0.04] transition-colors"
+                className="p-1.5 text-slate-600 hover:text-slate-900 rounded bg-slate-100 hover:bg-slate-200 transition-colors"
                 title={volumeMuted ? 'Unmute' : 'Mute'}
               >
                 {volumeMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
@@ -277,7 +277,7 @@ export const AudioVisualizerWidget: React.FC = () => {
             )}
           </div>
 
-          <span className="text-[10px] text-emerald-400 font-mono">
+          <span className="text-[10px] text-emerald-700 font-mono font-medium">
             {isPlaying ? '✓ HTTP 206 Partial Content (Streaming)' : 'Socket: Ready'}
           </span>
         </div>

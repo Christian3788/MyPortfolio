@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
+import { ArchitectureInvariantRibbon } from './components/ArchitectureInvariantRibbon';
+import { SectionFlowNavigator } from './components/SectionFlowNavigator';
 import { FeaturedProjects } from './components/FeaturedProjects';
 import { SystemsLabSection } from './components/SystemsLabSection';
 import { RepositoriesGrid } from './components/RepositoriesGrid';
@@ -114,7 +116,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#090a0f] text-slate-100 flex flex-col font-sans selection:bg-indigo-500/20 selection:text-indigo-200">
+    <div className="min-h-screen bg-[#f5f8ff] text-[#1d2129] flex flex-col font-sans selection:bg-[#0059e8]/15 selection:text-[#0059e8]">
       
       {/* Navigation (Strict Top Bar Contract) */}
       <Navbar
@@ -138,6 +140,9 @@ export default function App() {
           onPersonaChange={setPersona}
         />
 
+        {/* Engineering Invariants Telemetry Strip */}
+        <ArchitectureInvariantRibbon />
+
         {/* 01. Flagship Systems Architecture & Interactive Simulators */}
         <FeaturedProjects
           projects={featuredProjects}
@@ -147,44 +152,47 @@ export default function App() {
         {/* 02. Interactive Systems Lab & Hardware Simulation */}
         <SystemsLabSection />
 
-        {/* 03. Live GitHub Repositories Grid (44 Public Repos) with Search & Language Filters */}
+        {/* 03. Zone01 Peer Code Defense & Architecture Reviews */}
+        <PeerCodeDefenseSection />
+
+        {/* 04. Live GitHub Repositories Grid (44 Public Repos) with Search & Language Filters */}
         <RepositoriesGrid
           repos={repos}
           username={currentUser.login}
           onOpenRepoDetails={(repo) => setSelectedRepo(repo)}
         />
 
-        {/* 04. Engineering Telemetry & Yearly Contribution Graph */}
+        {/* 05. Engineering Telemetry & Yearly Contribution Graph */}
         <ContributionGraph
           events={events}
           repos={repos}
           username={currentUser.login}
         />
 
-        {/* 05. Career Experience Timeline & Peer-Defended Apprenticeship */}
+        {/* 06. Career Experience Timeline & Peer-Defended Apprenticeship */}
         <ExperienceTimeline history={experience} />
-
-        {/* 06. Zone01 Peer Code Defense & Architecture Reviews */}
-        <PeerCodeDefenseSection />
 
         {/* 07. Technical Competencies Matrix */}
         <SkillsSection />
 
-        {/* 07. Technical Writing & Publications */}
-        <ArticlesSection />
-
         {/* 08. Computational Inquiries & Scientific Roots (Gravitational Lensing) */}
         <ResearchInterestsSection />
 
-        {/* 09. Dynamic Infinite Scroll Systems Dispatches Feed */}
-        <DynamicInfiniteScrollStream />
+        {/* 09. Technical Writing & Publications */}
+        <ArticlesSection />
 
         {/* 10. Interactive 3D Globe · Real Geolocation & Telemetry Hub */}
         <Interactive3DGlobe />
 
-        {/* 11. Interactive Collaboration & Contact Dispatch */}
+        {/* 11. Dynamic Infinite Scroll Systems Dispatches Feed */}
+        <DynamicInfiniteScrollStream />
+
+        {/* 12. Interactive Collaboration & Contact Dispatch */}
         <ContactSection user={currentUser} />
       </main>
+
+      {/* Interactive Section Flow Navigator (Floating Side Rail) */}
+      <SectionFlowNavigator />
 
       {/* Quiet, Clean Footer */}
       <Footer user={currentUser} />

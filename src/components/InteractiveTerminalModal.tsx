@@ -26,9 +26,9 @@ export const InteractiveTerminalModal: React.FC<InteractiveTerminalModalProps> =
     {
       command: 'init',
       output: (
-        <div className="space-y-1 text-slate-400">
-          <div className="text-emerald-400">Christian Amos Otieno Systems Shell [v2.4.0-go]</div>
-          <div>Type <span className="text-indigo-400 font-bold">help</span> to list commands, or <span className="text-indigo-400 font-bold">cat resume.txt</span> to inspect curriculum vitae.</div>
+        <div className="space-y-1 text-slate-200">
+          <div className="text-emerald-400 font-bold">Christian Amos Otieno Systems Shell [v2.4.0-go]</div>
+          <div>Type <span className="text-sky-300 font-bold">help</span> to list commands, or <span className="text-sky-300 font-bold">cat resume.txt</span> to inspect curriculum vitae.</div>
         </div>
       ),
     },
@@ -86,9 +86,9 @@ export const InteractiveTerminalModal: React.FC<InteractiveTerminalModalProps> =
         output = (
           <div className="space-y-1">
             <div className="text-white font-bold">{user.name || 'Christian Amos Otieno'}</div>
-            <div className="text-slate-300">Apprentice Full-Stack Developer @ Zone01 Kisumu</div>
-            <div className="text-slate-400">B.Sc. Microbiology & Biotechnology (Aga Khan University)</div>
-            <div className="text-slate-400">Focus: Go HTTP 206 streaming, PostGIS GiST spatial indexing, SIMD search</div>
+            <div className="text-slate-200 font-medium">Apprentice Full-Stack Developer @ Zone01 Kisumu</div>
+            <div className="text-slate-300">B.Sc. Microbiology &amp; Biotechnology (Aga Khan University)</div>
+            <div className="text-slate-300">Focus: Go HTTP 206 streaming, PostGIS GiST spatial indexing, SIMD search</div>
           </div>
         );
         break;
@@ -98,8 +98,8 @@ export const InteractiveTerminalModal: React.FC<InteractiveTerminalModalProps> =
           <div className="space-y-2">
             {projects.map((p) => (
               <div key={p.id} className="text-xs">
-                <span className="text-indigo-400 font-bold">{p.title}</span> ({p.category})
-                <div className="text-slate-400 pl-2">↳ {p.solution}</div>
+                <span className="text-sky-300 font-bold">{p.title}</span> ({p.category})
+                <div className="text-slate-300 pl-2 font-medium">↳ {p.solution}</div>
               </div>
             ))}
           </div>
@@ -258,31 +258,31 @@ PROJECTS:
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-150"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-150"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-3xl rounded-2xl bg-[#090a0f] border border-white/[0.14] shadow-2xl flex flex-col h-[520px] overflow-hidden"
+        className="relative w-full max-w-3xl rounded-2xl bg-slate-950 border border-slate-700 shadow-2xl flex flex-col h-[520px] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Terminal Title Bar */}
-        <div className="flex items-center justify-between px-4 py-3 bg-[#0e1017] border-b border-white/[0.08] select-none">
-          <div className="flex items-center gap-2 text-xs font-mono text-slate-300">
-            <Terminal className="w-4 h-4 text-indigo-400" />
+        <div className="flex items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800 select-none">
+          <div className="flex items-center gap-2 text-xs font-mono text-slate-200">
+            <Terminal className="w-4 h-4 text-[#0059e8]" />
             <span>developer-shell · christian@zone01-node:~</span>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => setHistory([])}
-              className="p-1 text-slate-500 hover:text-white rounded"
+              className="p-1 text-slate-300 hover:text-white rounded cursor-pointer transition-colors"
               title="Clear terminal"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={onClose}
-              className="p-1 text-slate-400 hover:text-white rounded bg-white/[0.04]"
+              className="p-1 text-slate-300 hover:text-white rounded bg-slate-800 hover:bg-slate-700 cursor-pointer transition-colors"
               title="Close terminal (Esc)"
             >
               <X className="w-4 h-4" />
@@ -297,7 +297,7 @@ PROJECTS:
         >
           {history.map((item, idx) => (
             <div key={idx} className="space-y-1">
-              <div className="flex items-center gap-2 text-slate-400">
+              <div className="flex items-center gap-2 text-slate-300">
                 <span className="text-emerald-400 font-bold">christian@zone01:~$</span>
                 <span className="text-white font-semibold">{item.command}</span>
               </div>
@@ -306,7 +306,7 @@ PROJECTS:
           ))}
 
           {/* Active Prompt Line */}
-          <div className="flex items-center gap-2 text-slate-400 pt-1">
+          <div className="flex items-center gap-2 text-slate-300 pt-1">
             <span className="text-emerald-400 font-bold">christian@zone01:~$</span>
             <input
               ref={inputRef}
@@ -323,9 +323,9 @@ PROJECTS:
         </div>
 
         {/* Footer shortcuts */}
-        <div className="px-4 py-2 bg-[#0e1017] border-t border-white/[0.06] flex items-center justify-between text-[11px] font-mono text-slate-500">
-          <span>Type <strong className="text-indigo-400 font-normal">help</strong> for available commands</span>
-          <span>Tab / Arrows for history</span>
+        <div className="px-4 py-2 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono text-slate-300">
+          <span>Type <strong className="text-sky-300 font-semibold">help</strong> for available commands</span>
+          <span className="text-slate-400">Tab / Arrows for history</span>
         </div>
       </div>
     </div>

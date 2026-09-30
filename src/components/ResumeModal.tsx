@@ -55,15 +55,15 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/50 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200">
       <div
-        className="relative w-full max-w-4xl rounded-2xl bg-[#0e1017] border border-white/[0.12] shadow-2xl p-6 sm:p-10 space-y-8 max-h-[92vh] overflow-y-auto print:bg-white print:text-black print:max-h-none print:shadow-none print:border-none"
+        className="relative w-full max-w-4xl rounded-2xl bg-white border border-slate-200/90 shadow-2xl p-6 sm:p-10 space-y-8 max-h-[92vh] overflow-y-auto text-slate-900 print:bg-white print:text-black print:max-h-none print:shadow-none print:border-none"
         onClick={(e) => e.stopPropagation()}
       >
         
         {/* Actions Bar */}
-        <div className="flex items-center justify-between pb-4 border-b border-white/[0.08] print:hidden">
-          <div className="text-xs font-mono uppercase tracking-wider text-indigo-400 font-semibold">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-200 print:hidden">
+          <div className="text-xs font-mono uppercase tracking-wider text-[#0059e8] font-semibold">
             Curriculum Vitae · Christian Amos Otieno
           </div>
 
@@ -71,7 +71,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
             <a
               href="/resume.pdf"
               download="Christian_Amos_Otieno_Resume.pdf"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-[#0059e8] hover:bg-[#0048c4] rounded-lg transition-colors shadow-xs"
             >
               <FileText className="w-3.5 h-3.5" />
               <span>Official PDF</span>
@@ -79,7 +79,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
 
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-200 bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200/90 rounded-lg transition-colors cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print</span>
@@ -87,7 +87,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
 
             <button
               onClick={handleDownloadJSON}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-200 bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200/90 rounded-lg transition-colors cursor-pointer"
             >
               <Download className="w-3.5 h-3.5" />
               <span>JSON</span>
@@ -95,7 +95,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
 
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-white rounded-lg bg-white/[0.04]"
+              className="p-1.5 text-slate-500 hover:text-slate-900 rounded-lg bg-slate-100 hover:bg-slate-200 cursor-pointer transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -103,8 +103,8 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
         </div>
 
         {/* Resume Header */}
-        <div className="flex flex-col sm:flex-row items-start gap-6 border-b border-white/[0.08] pb-6 print:border-black/20">
-          <div className="relative w-24 h-32 sm:w-28 sm:h-36 rounded-xl overflow-hidden bg-slate-800 border border-white/[0.15] print:border-black/30 shrink-0 shadow-lg">
+        <div className="flex flex-col sm:flex-row items-start gap-6 border-b border-slate-200 pb-6 print:border-black/20">
+          <div className="relative w-24 h-32 sm:w-28 sm:h-36 rounded-xl overflow-hidden bg-slate-100 border border-slate-300 print:border-black/30 shrink-0 shadow-sm">
             <img
               src="/IMG_20260926_072914.jpg"
               alt={user.name || 'Christian Amos Otieno'}
@@ -117,27 +117,27 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
 
           <div className="space-y-3 flex-1">
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
-              <h1 className="text-3xl font-extrabold text-white print:text-black font-display tracking-tight">
+              <h1 className="text-3xl font-extrabold text-slate-900 print:text-black font-display tracking-tight">
                 {user.name || 'Christian Amos Otieno'}
               </h1>
-              <div className="text-sm font-semibold text-indigo-400 print:text-indigo-700 font-mono">
+              <div className="text-sm font-semibold text-[#0059e8] print:text-blue-700 font-mono">
                 Systems-Focused Software Engineer
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 print:text-slate-600">
+            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-700 font-mono font-medium">
               <span className="flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5" />
+                <MapPin className="w-3.5 h-3.5 text-[#0059e8]" />
                 {user.location || 'Kisumu, Kenya'}
               </span>
               <span>·</span>
               <span className="flex items-center gap-1">
-                <Mail className="w-3.5 h-3.5" />
+                <Mail className="w-3.5 h-3.5 text-[#0059e8]" />
                 {user.email || 'christianamos67@gmail.com'}
               </span>
               <span>·</span>
               <span className="flex items-center gap-1">
-                <Github className="w-3.5 h-3.5" />
+                <Github className="w-3.5 h-3.5 text-[#0059e8]" />
                 github.com/{user.login}
               </span>
               <span>·</span>
@@ -145,21 +145,21 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
                 href="https://www.linkedin.com/in/christian-otieno-9a9806229/"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1 hover:text-white print:text-black transition-colors"
+                className="flex items-center gap-1 hover:text-[#0059e8] print:text-black transition-colors"
               >
-                <Linkedin className="w-3.5 h-3.5 text-[#0a66c2]" />
+                <Linkedin className="w-3.5 h-3.5 text-[#0059e8]" />
                 linkedin.com/in/christian-otieno-9a9806229
               </a>
               <span>·</span>
               <span className="flex items-center gap-1">
-                <Building className="w-3.5 h-3.5" />
-                Zone01 Kisumu & Aga Khan University
+                <Building className="w-3.5 h-3.5 text-[#0059e8]" />
+                Zone01 Kisumu &amp; Aga Khan University
               </span>
             </div>
 
-            <p className="text-sm text-slate-300 print:text-slate-700 leading-relaxed pt-1">
+            <p className="text-sm text-slate-700 print:text-slate-700 leading-relaxed pt-1">
               Systems-focused software engineer specializing in low-overhead network protocols in Go, high-throughput spatial
-              indexing in PostGIS, and deterministic interfaces in Next.js & TypeScript. Proven record designing HTTP 206
+              indexing in PostGIS, and deterministic interfaces in Next.js &amp; TypeScript. Proven record designing HTTP 206
               byte-range streaming engines, SIMD vector search algorithms, and peer-defended distributed microservices.
             </p>
           </div>
@@ -167,24 +167,24 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
 
         {/* Core Competencies */}
         <div className="space-y-3 pt-2">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-indigo-400 print:text-indigo-700 font-mono">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-[#0059e8] print:text-blue-700 font-mono">
             Core Technical Skills
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-300 print:text-slate-800">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-700 print:text-slate-800">
             <div>
-              <span className="font-semibold text-white print:text-black">Languages & Runtimes: </span>
+              <span className="font-semibold text-slate-900 print:text-black">Languages &amp; Runtimes: </span>
               Go, TypeScript, JavaScript, Python 3, SQL, HTML5/CSS, Bash
             </div>
             <div>
-              <span className="font-semibold text-white print:text-black">Databases & Spatial: </span>
+              <span className="font-semibold text-slate-900 print:text-black">Databases &amp; Spatial: </span>
               PostgreSQL, PostGIS (GiST Indexing), Prisma ORM, Redis Pub/Sub, MinIO
             </div>
             <div>
-              <span className="font-semibold text-white print:text-black">Frameworks & Protocols: </span>
+              <span className="font-semibold text-slate-900 print:text-black">Frameworks &amp; Protocols: </span>
               Next.js, React, HTTP 206 Partial Content, WebSockets, REST, Docker
             </div>
             <div>
-              <span className="font-semibold text-white print:text-black">Algorithms & Systems: </span>
+              <span className="font-semibold text-slate-900 print:text-black">Algorithms &amp; Systems: </span>
               SIMD 4-way loop unrolling, vector similarity search, Bloom filters, IPCC climate modeling
             </div>
           </div>
@@ -192,27 +192,27 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
 
         {/* Experience & Apprenticeship */}
         <div className="space-y-6 pt-2">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-indigo-400 print:text-indigo-700 font-mono">
-            Experience & Engineering Practice
+          <h2 className="text-xs font-bold uppercase tracking-wider text-[#0059e8] print:text-blue-700 font-mono">
+            Experience &amp; Engineering Practice
           </h2>
 
           <div className="space-y-6">
             {experience.map((exp) => (
               <div key={exp.id} className="space-y-2">
                 <div className="flex flex-col sm:flex-row sm:items-baseline justify-between">
-                  <div className="font-bold text-white print:text-black text-sm">
-                    {exp.role} <span className="font-normal text-slate-400 print:text-slate-600">· {exp.company}</span>
+                  <div className="font-bold text-slate-900 print:text-black text-sm">
+                    {exp.role} <span className="font-normal text-slate-600 print:text-slate-600">· {exp.company}</span>
                   </div>
-                  <div className="text-xs text-indigo-400 print:text-slate-600 font-mono">
+                  <div className="text-xs text-[#0059e8] print:text-slate-600 font-mono">
                     {exp.period} · {exp.location}
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-300 print:text-slate-700 leading-relaxed">
+                <p className="text-xs text-slate-700 print:text-slate-700 leading-relaxed">
                   {exp.summary}
                 </p>
 
-                <ul className="space-y-1.5 text-xs text-slate-300 print:text-slate-800 pl-4 list-disc">
+                <ul className="space-y-1.5 text-xs text-slate-700 print:text-slate-800 pl-4 list-disc">
                   {exp.highlights.map((h, i) => (
                     <li key={i} className="leading-relaxed">
                       {h}
@@ -226,16 +226,16 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
 
         {/* Education Credentials */}
         <div className="space-y-3 pt-2">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-indigo-400 print:text-indigo-700 font-mono">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-[#0059e8] print:text-blue-700 font-mono">
             Formal Education
           </h2>
-          <div className="p-4 rounded-lg bg-white/[0.02] border border-white/[0.06] print:border-slate-300 print:bg-slate-50 space-y-2 text-xs">
+          <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 print:border-slate-300 print:bg-slate-50 space-y-2 text-xs">
             <div className="flex items-center justify-between">
-              <span className="font-bold text-white print:text-black">B.Sc. in Microbiology and Biotechnology</span>
-              <span className="text-slate-400 font-mono">2019 - 2022</span>
+              <span className="font-bold text-slate-900 print:text-black">B.Sc. in Microbiology and Biotechnology</span>
+              <span className="text-slate-700 font-mono font-medium">2019 - 2022</span>
             </div>
-            <div className="text-indigo-400 print:text-indigo-700">Aga Khan University · Nairobi, Kenya</div>
-            <p className="text-slate-300 print:text-slate-700">
+            <div className="text-[#0059e8] print:text-blue-700 font-semibold">Aga Khan University · Nairobi, Kenya</div>
+            <p className="text-slate-700 print:text-slate-700 leading-relaxed">
               Rigorous scientific and computational foundation in reaction-diffusion dynamics, cellular automata,
               bioinformatics pipelines, and stochastic mathematical modeling.
             </p>
@@ -244,16 +244,16 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
 
         {/* Key Projects */}
         <div className="space-y-4 pt-2">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-indigo-400 print:text-indigo-700 font-mono">
+          <h2 className="text-xs font-bold uppercase tracking-wider text-[#0059e8] print:text-blue-700 font-mono">
             Selected System Deployments
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {featuredProjects.map((p) => (
-              <div key={p.id} className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.06] print:border-slate-300 print:bg-slate-50 space-y-1">
-                <div className="font-bold text-xs text-white print:text-black">{p.title}</div>
-                <p className="text-[11px] text-slate-300 print:text-slate-700 line-clamp-2">{p.description}</p>
-                <div className="text-[10px] text-indigo-300 print:text-indigo-700 font-mono">
+              <div key={p.id} className="p-3 rounded-lg bg-slate-50 border border-slate-200 print:border-slate-300 print:bg-slate-50 space-y-1">
+                <div className="font-bold text-xs text-slate-900 print:text-black">{p.title}</div>
+                <p className="text-[11px] text-slate-700 print:text-slate-700 line-clamp-2 leading-relaxed">{p.description}</p>
+                <div className="text-[10px] text-[#0059e8] print:text-blue-700 font-mono font-medium">
                   {p.techStack.join(' · ')}
                 </div>
               </div>

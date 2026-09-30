@@ -190,24 +190,24 @@ export const FloatingAiVoiceAssistant: React.FC = () => {
         <div
           role="region"
           aria-label="AI Voice Assistant Chat Window"
-          className="relative mb-3 w-[92vw] sm:w-[400px] h-[520px] rounded-2xl bg-[#090b14]/95 border border-white/[0.12] backdrop-blur-xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200"
+          className="relative mb-3 w-[92vw] sm:w-[400px] h-[520px] rounded-2xl bg-white/98 border border-slate-200/90 backdrop-blur-xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200 text-slate-900"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="p-4 bg-white/[0.03] border-b border-white/[0.08] flex items-center justify-between">
+          <div className="p-4 bg-slate-50/90 border-b border-slate-200 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="relative w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-sky-500 flex items-center justify-center text-white shadow-md">
+              <div className="relative w-8 h-8 rounded-full bg-[#0059e8] flex items-center justify-center text-white shadow-xs">
                 <Bot className="w-4 h-4" />
                 {isSpeaking && (
-                  <span className="absolute -inset-1 rounded-full bg-indigo-500/40 animate-ping pointer-events-none" />
+                  <span className="absolute -inset-1 rounded-full bg-blue-500/40 animate-ping pointer-events-none" />
                 )}
               </div>
               <div>
-                <div className="text-xs font-bold text-white flex items-center gap-1.5 font-display">
+                <div className="text-xs font-bold text-slate-900 flex items-center gap-1.5 font-display">
                   <span>Christian AI Voice Assistant</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 </div>
-                <div className="text-[10px] text-slate-400 font-mono">
+                <div className="text-[10px] text-slate-700 font-mono font-medium">
                   {isSpeaking ? 'Speaking audio...' : isListening ? 'Listening to voice...' : 'Gemini 3.8-Flash Ready'}
                 </div>
               </div>
@@ -220,8 +220,8 @@ export const FloatingAiVoiceAssistant: React.FC = () => {
                   if (window.speechSynthesis) window.speechSynthesis.cancel();
                   setIsSpeaking(false);
                 }}
-                className={`p-1.5 rounded-lg text-xs transition-colors ${
-                  voiceEnabled ? 'text-indigo-400 hover:text-white' : 'text-slate-500 hover:text-slate-300'
+                className={`p-1.5 rounded-lg text-xs transition-colors cursor-pointer ${
+                  voiceEnabled ? 'text-[#0059e8] hover:text-[#0048c4]' : 'text-slate-500 hover:text-slate-800'
                 }`}
                 title={voiceEnabled ? 'Mute AI Voice' : 'Enable AI Voice'}
               >
@@ -229,7 +229,7 @@ export const FloatingAiVoiceAssistant: React.FC = () => {
               </button>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors"
+                className="p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
                 title="Minimize Assistant"
               >
                 <X className="w-4 h-4" />
@@ -239,49 +239,49 @@ export const FloatingAiVoiceAssistant: React.FC = () => {
 
           {/* Voice Waveform Activity Strip */}
           {(isSpeaking || isListening) && (
-            <div className="px-4 py-2 bg-indigo-950/40 border-b border-indigo-500/30 flex items-center justify-between text-[11px] font-mono text-indigo-300">
+            <div className="px-4 py-2 bg-blue-50 border-b border-blue-200 flex items-center justify-between text-[11px] font-mono text-[#0059e8]">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-[#0059e8] animate-pulse" />
                 <span>{isSpeaking ? 'Synthesizing voice response...' : 'Listening to speech...'}</span>
               </div>
               <div className="flex items-center gap-1 h-3">
-                <span className="w-1 h-3 bg-indigo-400 animate-pulse" />
-                <span className="w-1 h-2 bg-indigo-300 animate-pulse" />
-                <span className="w-1 h-3.5 bg-indigo-400 animate-pulse" />
-                <span className="w-1 h-1.5 bg-indigo-300 animate-pulse" />
+                <span className="w-1 h-3 bg-[#0059e8] animate-pulse" />
+                <span className="w-1 h-2 bg-blue-400 animate-pulse" />
+                <span className="w-1 h-3.5 bg-[#0059e8] animate-pulse" />
+                <span className="w-1 h-1.5 bg-blue-400 animate-pulse" />
               </div>
             </div>
           )}
 
           {/* Messages Scroll Area */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 text-xs">
+          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 text-xs bg-slate-50/50">
             {messages.map((m) => (
               <div
                 key={m.id}
                 className={`flex gap-2.5 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {m.role === 'assistant' && (
-                  <div className="w-6 h-6 rounded-full bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-6 h-6 rounded-full bg-blue-100 text-[#0059e8] flex items-center justify-center shrink-0 mt-0.5">
                     <Bot className="w-3.5 h-3.5" />
                   </div>
                 )}
                 <div
                   className={`max-w-[82%] p-3 rounded-xl leading-relaxed ${
                     m.role === 'user'
-                      ? 'bg-indigo-600 text-white font-medium rounded-tr-none'
-                      : 'bg-white/[0.04] border border-white/[0.08] text-slate-200 rounded-tl-none'
+                      ? 'bg-[#0059e8] text-white font-medium rounded-tr-none shadow-xs'
+                      : 'bg-white border border-slate-200/90 text-slate-900 rounded-tl-none shadow-xs font-normal'
                   }`}
                 >
                   <div className="whitespace-pre-wrap">{m.text}</div>
-                  <div className="text-[9px] text-slate-400 mt-1 text-right font-mono">
+                  <div className={`text-[9px] mt-1 text-right font-mono ${m.role === 'user' ? 'text-blue-100' : 'text-slate-600 font-medium'}`}>
                     {m.timestamp}
                   </div>
                 </div>
               </div>
             ))}
             {isLoading && (
-              <div className="flex gap-2.5 items-center text-xs text-slate-400">
-                <div className="w-6 h-6 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center">
+              <div className="flex gap-2.5 items-center text-xs text-slate-700 font-medium">
+                <div className="w-6 h-6 rounded-full bg-blue-50 text-[#0059e8] flex items-center justify-center">
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
                 </div>
                 <span>Reasoning with Gemini...</span>
@@ -291,36 +291,36 @@ export const FloatingAiVoiceAssistant: React.FC = () => {
           </div>
 
           {/* Quick Prompt Suggestions */}
-          <div className="px-3 py-2 bg-black/40 border-t border-white/[0.04] flex items-center gap-1.5 overflow-x-auto text-[10px] font-mono text-slate-400">
-            <span className="text-slate-500 shrink-0">Ask:</span>
+          <div className="px-3 py-2 bg-slate-50 border-t border-slate-200 flex items-center gap-1.5 overflow-x-auto text-[10px] font-mono text-slate-700">
+            <span className="text-slate-600 font-bold shrink-0">Ask:</span>
             <button
               onClick={() => handleQuickPrompt("Tell me about LYRIC's Go streaming architecture")}
-              className="px-2 py-1 rounded bg-white/[0.03] hover:bg-white/[0.08] text-slate-300 whitespace-nowrap transition-colors shrink-0"
+              className="px-2 py-1 rounded bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 whitespace-nowrap transition-colors shrink-0 shadow-xs cursor-pointer"
             >
               LYRIC Streamer
             </button>
             <button
               onClick={() => handleQuickPrompt("What did Christian defend at Zone01 Kisumu?")}
-              className="px-2 py-1 rounded bg-white/[0.03] hover:bg-white/[0.08] text-slate-300 whitespace-nowrap transition-colors shrink-0"
+              className="px-2 py-1 rounded bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 whitespace-nowrap transition-colors shrink-0 shadow-xs cursor-pointer"
             >
               Zone01 Defenses
             </button>
             <button
               onClick={() => handleQuickPrompt("Explain the PostGIS GiST index optimization")}
-              className="px-2 py-1 rounded bg-white/[0.03] hover:bg-white/[0.08] text-slate-300 whitespace-nowrap transition-colors shrink-0"
+              className="px-2 py-1 rounded bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 whitespace-nowrap transition-colors shrink-0 shadow-xs cursor-pointer"
             >
               PostGIS 3.12ms
             </button>
             <button
               onClick={() => handleQuickPrompt("How can I interview Christian for a role?")}
-              className="px-2 py-1 rounded bg-white/[0.03] hover:bg-white/[0.08] text-slate-300 whitespace-nowrap transition-colors shrink-0"
+              className="px-2 py-1 rounded bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 whitespace-nowrap transition-colors shrink-0 shadow-xs cursor-pointer"
             >
               Contact / Hire
             </button>
           </div>
 
           {/* Query Input & Voice Trigger */}
-          <div className="p-3 bg-white/[0.02] border-t border-white/[0.08]">
+          <div className="p-3 bg-white border-t border-slate-200">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -331,10 +331,10 @@ export const FloatingAiVoiceAssistant: React.FC = () => {
               <button
                 type="button"
                 onClick={toggleListening}
-                className={`p-2.5 rounded-xl transition-all ${
+                className={`p-2.5 rounded-xl transition-all cursor-pointer ${
                   isListening
-                    ? 'bg-rose-600 text-white animate-pulse shadow-lg shadow-rose-600/30'
-                    : 'bg-white/[0.06] hover:bg-white/[0.1] text-indigo-400'
+                    ? 'bg-rose-600 text-white animate-pulse shadow-md shadow-rose-600/30'
+                    : 'bg-slate-100 hover:bg-slate-200 text-[#0059e8]'
                 }`}
                 title={isListening ? 'Stop listening' : 'Speak via microphone'}
               >
@@ -346,13 +346,13 @@ export const FloatingAiVoiceAssistant: React.FC = () => {
                 value={inputQuery}
                 onChange={(e) => setInputQuery(e.target.value)}
                 placeholder="Speak or type a question..."
-                className="flex-1 px-3 py-2 text-xs rounded-xl bg-black/60 border border-white/[0.1] text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+                className="flex-1 px-3 py-2 text-xs rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-500 focus:outline-none focus:border-[#0059e8] focus:ring-1 focus:ring-[#0059e8] transition-colors"
               />
 
               <button
                 type="submit"
                 disabled={!inputQuery.trim() || isLoading}
-                className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white transition-colors"
+                className="p-2.5 rounded-xl bg-[#0059e8] hover:bg-[#0048c4] disabled:opacity-40 text-white transition-colors cursor-pointer shadow-xs"
               >
                 <Send className="w-4 h-4" />
               </button>
@@ -367,15 +367,12 @@ export const FloatingAiVoiceAssistant: React.FC = () => {
           setIsOpen(!isOpen);
           soundService.playClick(320, 0.03);
         }}
-        className="group relative flex items-center gap-2 px-4 py-3 rounded-full bg-[#0d101a] border border-indigo-500/40 hover:border-indigo-400 text-white shadow-2xl hover:shadow-indigo-500/25 transition-all duration-300"
+        className="group relative flex items-center gap-2 px-4 py-3 rounded-full bg-[#0059e8] hover:bg-[#0048c4] text-white shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer"
         title="Open Christian's AI Voice Assistant"
       >
-        {/* Glow halo */}
-        <span className="absolute -inset-0.5 rounded-full bg-gradient-to-tr from-indigo-500 to-sky-400 opacity-40 group-hover:opacity-80 blur transition duration-300 pointer-events-none" />
-
         <div className="relative flex items-center gap-2.5">
           <div className="relative flex items-center justify-center">
-            <Bot className="w-5 h-5 text-indigo-300 group-hover:text-white transition-colors" />
+            <Bot className="w-5 h-5 text-white" />
             <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400" />
           </div>

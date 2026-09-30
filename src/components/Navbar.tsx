@@ -25,6 +25,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [soundEnabled, setSoundEnabled] = useState(soundService.isEnabled());
   const moreRef = useRef<HTMLDivElement>(null);
 
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Track window scroll progress for top indicator bar
+  useEffect(() => {
+    const handleScroll = () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      if (total > 0) {
+        setScrollProgress((window.scrollY / total) * 100);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Close 'More' dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -44,32 +58,48 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-[#090a0f]/85 border-b border-white/[0.08] transition-colors">
+    <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-white/95 border-b border-slate-200/90 transition-colors shadow-xs">
+      {/* Real-time reading scroll progress bar */}
+      <div
+        className="fixed top-0 left-0 h-[2.5px] bg-[#0059e8] z-50 transition-all duration-75 ease-out"
+        style={{ width: `${scrollProgress}%` }}
+        role="progressbar"
+        aria-valuenow={Math.round(scrollProgress)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
         {/* Zone 1: Single text element wordmark in display face */}
         <a
           href="#top"
-          className="text-lg font-semibold tracking-tight text-white hover:text-indigo-300 transition-colors font-display"
+          className="flex items-center gap-2 text-lg font-bold tracking-tight text-slate-900 hover:text-[#0059e8] transition-colors font-display group"
         >
-          {user.name || user.login}
+          <span>{user.name || user.login}</span>
+          <span className="hidden md:inline text-xs font-mono font-medium text-slate-500 group-hover:text-[#0059e8] transition-colors">
+            / Systems Engineer
+          </span>
         </a>
 
-        {/* Zone 2: 5 clean core links + quiet More dropdown (No awkward wrapping on 1024-1280px) */}
-        <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-300">
-          <a href="#featured" className="hover:text-white transition-colors">
-            Featured
+        {/* Zone 2: Clean core links + quiet More dropdown */}
+        <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-700 font-sans">
+          <a href="#featured" className="hover:text-[#0059e8] transition-colors">
+            Projects
           </a>
-          <a href="#systems-lab" className="hover:text-white transition-colors text-indigo-300">
-            Systems Lab
+          <a href="#systems-lab" className="hover:text-[#0059e8] transition-colors">
+            Benchmarks
           </a>
-          <a href="#peer-defense" className="hover:text-white transition-colors text-emerald-400">
+          <a href="#peer-defense" className="hover:text-emerald-700 transition-colors text-emerald-700 font-semibold">
             Peer Defense
           </a>
-          <a href="#interactive-globe" className="hover:text-white transition-colors text-sky-400">
+          <a href="#experience" className="hover:text-[#0059e8] transition-colors">
+            Experience
+          </a>
+          <a href="#interactive-globe" className="hover:text-sky-700 transition-colors text-sky-700 font-semibold">
             3D Globe
           </a>
-          <a href="#contact" className="hover:text-white transition-colors">
+          <a href="#contact" className="hover:text-[#0059e8] transition-colors">
             Contact
           </a>
 
@@ -80,62 +110,55 @@ export const Navbar: React.FC<NavbarProps> = ({
                 soundService.playClick(200, 0.015);
                 setMoreMenuOpen((prev) => !prev);
               }}
-              className="flex items-center gap-1 hover:text-white transition-colors text-slate-400 cursor-pointer"
+              className="flex items-center gap-1 hover:text-[#0059e8] transition-colors text-slate-700 font-medium cursor-pointer"
             >
               <span>More</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${moreMenuOpen ? 'rotate-180 text-white' : ''}`} />
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${moreMenuOpen ? 'rotate-180 text-[#0059e8]' : ''}`} />
             </button>
 
             {moreMenuOpen && (
-              <div className="absolute top-full left-0 mt-2 w-48 py-2 rounded-xl bg-[#090b14]/95 backdrop-blur-xl border border-white/[0.12] shadow-2xl z-50 text-xs font-mono space-y-1 animate-in fade-in zoom-in-95 duration-150">
+              <div className="absolute top-full left-0 mt-2 w-56 py-2 rounded-xl bg-white border border-slate-200 shadow-xl z-50 text-xs font-mono space-y-1 animate-in fade-in zoom-in-95 duration-150">
                 <a
                   href="#repositories"
                   onClick={() => setMoreMenuOpen(false)}
-                  className="block px-3.5 py-2 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+                  className="block px-3.5 py-2 text-slate-700 hover:text-[#0059e8] hover:bg-slate-50 transition-colors"
                 >
-                  Repositories (44)
+                  04. Repositories (44)
                 </a>
                 <a
-                  href="#activity"
+                  href="#telemetry"
                   onClick={() => setMoreMenuOpen(false)}
-                  className="block px-3.5 py-2 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+                  className="block px-3.5 py-2 text-slate-700 hover:text-[#0059e8] hover:bg-slate-50 transition-colors"
                 >
-                  Activity Telemetry
-                </a>
-                <a
-                  href="#experience"
-                  onClick={() => setMoreMenuOpen(false)}
-                  className="block px-3.5 py-2 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
-                >
-                  Experience Milestones
+                  05. Activity Heatmap
                 </a>
                 <a
                   href="#skills"
                   onClick={() => setMoreMenuOpen(false)}
-                  className="block px-3.5 py-2 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+                  className="block px-3.5 py-2 text-slate-700 hover:text-[#0059e8] hover:bg-slate-50 transition-colors"
                 >
-                  Technical Competencies
-                </a>
-                <a
-                  href="#articles"
-                  onClick={() => setMoreMenuOpen(false)}
-                  className="block px-3.5 py-2 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
-                >
-                  Articles & Publications
+                  07. Tech Competencies
                 </a>
                 <a
                   href="#research"
                   onClick={() => setMoreMenuOpen(false)}
-                  className="block px-3.5 py-2 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+                  className="block px-3.5 py-2 text-slate-700 hover:text-[#0059e8] hover:bg-slate-50 transition-colors"
                 >
-                  Astrophysics Research
+                  08. Scientific Roots &amp; Lensing
+                </a>
+                <a
+                  href="#articles"
+                  onClick={() => setMoreMenuOpen(false)}
+                  className="block px-3.5 py-2 text-slate-700 hover:text-[#0059e8] hover:bg-slate-50 transition-colors"
+                >
+                  09. Technical Publications
                 </a>
                 <a
                   href="#engineering-stream"
                   onClick={() => setMoreMenuOpen(false)}
-                  className="block px-3.5 py-2 text-indigo-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+                  className="block px-3.5 py-2 text-[#0059e8] hover:text-[#0048c4] hover:bg-blue-50/60 transition-colors font-semibold"
                 >
-                  Continuous Logs Stream
+                  11. Continuous Dispatches Stream
                 </a>
               </div>
             )}
@@ -147,12 +170,12 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Command Palette Trigger */}
           <button
             onClick={onOpenCommandPalette}
-            className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-md transition-colors"
+            className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-slate-600 hover:text-[#0059e8] bg-slate-100/90 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors cursor-pointer"
             title="Search or Run Commands (Cmd+K)"
           >
-            <Search className="w-3.5 h-3.5 text-indigo-400" />
-            <span className="hidden xl:inline text-[11px]">Command Menu</span>
-            <kbd className="px-1.5 py-0.5 text-[10px] bg-white/[0.06] border border-white/[0.1] rounded text-slate-400 font-mono">
+            <Search className="w-3.5 h-3.5 text-[#0059e8]" />
+            <span className="hidden xl:inline text-[11px] font-medium">Command Menu</span>
+            <kbd className="px-1.5 py-0.5 text-[10px] bg-white border border-slate-200 rounded text-slate-600 font-mono shadow-2xs">
               ⌘K
             </kbd>
           </button>
@@ -160,22 +183,22 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Terminal Shell Button */}
           <button
             onClick={onOpenTerminal}
-            className="p-1.5 text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-md transition-colors"
+            className="p-1.5 text-slate-600 hover:text-emerald-700 bg-slate-100/90 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-md transition-colors cursor-pointer"
             title="Interactive CLI Terminal"
           >
-            <Terminal className="w-4 h-4 text-emerald-400" />
+            <Terminal className="w-4 h-4 text-emerald-600" />
           </button>
 
           {/* Sound Haptics Toggle */}
           <button
             onClick={toggleSound}
-            className="p-1.5 text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] rounded-md transition-colors"
+            className="p-1.5 text-slate-700 hover:text-slate-900 bg-slate-100/90 hover:bg-slate-200 border border-slate-200 rounded-md transition-colors cursor-pointer"
             title={soundEnabled ? 'Mute Mechanical Click Sound' : 'Enable Mechanical Click Sound'}
           >
             {soundEnabled ? (
-              <Volume2 className="w-4 h-4 text-indigo-400" />
+              <Volume2 className="w-4 h-4 text-[#0059e8]" />
             ) : (
-              <VolumeX className="w-4 h-4 text-slate-500" />
+              <VolumeX className="w-4 h-4 text-slate-600" />
             )}
           </button>
 
@@ -185,7 +208,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             target="_blank"
             rel="noreferrer"
             title="LinkedIn Profile: Christian Otieno"
-            className="p-1.5 text-slate-400 hover:text-[#0a66c2] bg-white/[0.04] hover:bg-[#0a66c2]/10 border border-white/[0.08] hover:border-[#0a66c2]/40 rounded-md transition-colors"
+            className="p-1.5 text-slate-700 hover:text-[#0a66c2] bg-slate-100/90 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 rounded-md transition-colors"
           >
             <Linkedin className="w-4 h-4 text-[#0a66c2]" />
           </a>
@@ -194,17 +217,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={onOpenSyncModal}
             title="Switch GitHub Profile or enter token"
-            className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-slate-300 bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-white/[0.16] rounded-md transition-colors whitespace-nowrap"
+            className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-slate-800 bg-slate-100/90 hover:bg-slate-200 border border-slate-200 hover:border-slate-300 rounded-md transition-colors whitespace-nowrap cursor-pointer"
           >
-            <Github className="w-3.5 h-3.5 text-indigo-400" />
+            <Github className="w-3.5 h-3.5 text-[#0059e8]" />
             <span>@{user.login}</span>
-            <RefreshCw className={`w-3 h-3 text-slate-400 ${isSyncing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3 h-3 text-slate-600 ${isSyncing ? 'animate-spin' : ''}`} />
           </button>
 
-          {/* View CV Button */}
+          {/* View CV Button (WPS Royal Blue Button) */}
           <button
             onClick={onOpenResumeModal}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-md transition-colors shadow-sm whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-[#0059e8] hover:bg-[#0048c4] rounded-md transition-colors shadow-sm whitespace-nowrap cursor-pointer"
           >
             <FileText className="w-3.5 h-3.5" />
             <span>View CV</span>
@@ -215,21 +238,21 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex sm:hidden items-center gap-2">
           <button
             onClick={onOpenCommandPalette}
-            className="p-2 text-slate-300 rounded-md bg-white/[0.04] border border-white/[0.08]"
+            className="p-2 text-slate-700 rounded-md bg-slate-100 border border-slate-200"
             title="Search"
           >
-            <Search className="w-4 h-4 text-indigo-400" />
+            <Search className="w-4 h-4 text-[#0059e8]" />
           </button>
           <button
             onClick={onOpenTerminal}
-            className="p-2 text-slate-300 rounded-md bg-white/[0.04] border border-white/[0.08]"
+            className="p-2 text-slate-700 rounded-md bg-slate-100 border border-slate-200"
             title="Terminal CLI"
           >
-            <Terminal className="w-4 h-4 text-emerald-400" />
+            <Terminal className="w-4 h-4 text-emerald-600" />
           </button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-slate-300 hover:text-white focus:outline-none"
+            className="p-2 text-slate-700 hover:text-slate-900 focus:outline-none"
             aria-label="Toggle navigation"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -239,65 +262,79 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="sm:hidden border-b border-white/[0.08] bg-[#0c0e14] px-4 pt-3 pb-5 space-y-3">
-          <div className="flex flex-col space-y-2 text-sm font-medium text-slate-300">
+        <div className="sm:hidden border-b border-slate-200 bg-white px-4 pt-3 pb-5 space-y-3 shadow-lg">
+          <div className="flex flex-col space-y-2 text-sm font-medium text-slate-700">
             <a
               href="#featured"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1.5 hover:text-white"
+              className="py-1.5 hover:text-[#0059e8]"
             >
               Featured Architecture
             </a>
             <a
               href="#systems-lab"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1.5 text-indigo-300 font-semibold"
+              className="py-1.5 text-[#0059e8] font-semibold"
             >
               Systems Lab (Interactive)
             </a>
             <a
+              href="#peer-defense"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-1.5 text-emerald-700 font-semibold"
+            >
+              Peer Code Defense
+            </a>
+            <a
               href="#repositories"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1.5 hover:text-white"
+              className="py-1.5 hover:text-[#0059e8]"
             >
               GitHub Repositories (44)
             </a>
             <a
               href="#experience"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1.5 hover:text-white"
+              className="py-1.5 hover:text-[#0059e8]"
             >
-              Experience
+              Experience &amp; Leadership
+            </a>
+            <a
+              href="#interactive-globe"
+              onClick={() => setMobileMenuOpen(false)}
+              className="py-1.5 text-sky-700 font-semibold"
+            >
+              3D Network Globe
             </a>
             <a
               href="#articles"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1.5 hover:text-white"
+              className="py-1.5 hover:text-[#0059e8]"
             >
               Articles
             </a>
             <a
               href="#research"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1.5 hover:text-white"
+              className="py-1.5 hover:text-[#0059e8]"
             >
               Scientific Roots
             </a>
             <a
               href="#contact"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1.5 hover:text-white"
+              className="py-1.5 hover:text-[#0059e8]"
             >
               Contact
             </a>
           </div>
-          <div className="pt-3 border-t border-white/[0.08] flex items-center gap-3">
+          <div className="pt-3 border-t border-slate-200 flex items-center gap-3">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
                 onOpenResumeModal();
               }}
-              className="flex-1 py-2 text-xs font-semibold text-center text-white bg-indigo-600 rounded-md"
+              className="flex-1 py-2 text-xs font-semibold text-center text-white bg-[#0059e8] hover:bg-[#0048c4] rounded-md shadow-xs"
             >
               View Full CV
             </button>
@@ -305,7 +342,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               href={user.html_url}
               target="_blank"
               rel="noreferrer"
-              className="px-3 py-2 text-xs text-slate-300 bg-white/[0.04] border border-white/[0.08] rounded-md flex items-center gap-1"
+              className="px-3 py-2 text-xs text-slate-700 bg-slate-100 border border-slate-200 rounded-md flex items-center gap-1"
             >
               <span>GitHub</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -314,7 +351,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               href="https://www.linkedin.com/in/christian-otieno-9a9806229/"
               target="_blank"
               rel="noreferrer"
-              className="px-3 py-2 text-xs text-[#0a66c2] bg-white/[0.04] border border-[#0a66c2]/30 rounded-md flex items-center gap-1"
+              className="px-3 py-2 text-xs text-[#0a66c2] bg-blue-50 border border-blue-200 rounded-md flex items-center gap-1"
             >
               <Linkedin className="w-3.5 h-3.5" />
               <span>LinkedIn</span>

@@ -1069,23 +1069,23 @@ export const Interactive3DGlobe: React.FC = () => {
   const estimatedRttMs = distanceToKisumu ? Math.round((distanceToKisumu / 100) * 1.05) : null;
 
   return (
-    <section id="interactive-globe" className="py-20 border-t border-white/[0.08] relative overflow-hidden">
+    <section id="interactive-globe" className="py-20 border-t border-slate-200/90 bg-white relative overflow-hidden">
       {/* Background ambient gradient glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-indigo-500/10 rounded-full blur-[150px] pointer-events-none -z-10" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[450px] bg-blue-100/50 rounded-full blur-[150px] pointer-events-none -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4 border-b border-white/[0.08]">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4 border-b border-slate-200/80">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-indigo-400 uppercase font-mono mb-2">
-              <GlobeIcon className="w-4 h-4 text-indigo-400" />
-              <span>11. Planetary Telemetry &amp; Systems Lab Hub</span>
+            <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-[#0059e8] uppercase font-mono mb-2">
+              <GlobeIcon className="w-4 h-4 text-[#0059e8]" />
+              <span>10. Planetary Telemetry &amp; Infrastructure Globe</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-display">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 font-display">
               Real-World 3D Geolocation &amp; Network Globe
             </h2>
-            <p className="text-sm text-slate-400 max-w-2xl mt-1">
+            <p className="text-sm text-slate-700 font-medium max-w-2xl mt-1">
               Live browser coordinates, OpenStreetMap reverse geocoding, global edge latency telemetry, undersea submarine fiber cables, and interactive PostGIS spatial query simulations.
             </p>
           </div>
@@ -1097,10 +1097,10 @@ export const Interactive3DGlobe: React.FC = () => {
                 soundService.playClick(280, 0.02);
                 requestUserLocation();
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-medium bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/[0.1] transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-medium bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200/90 transition-all cursor-pointer shadow-xs"
               title="Refresh GPS / IP position"
             >
-              <Navigation className="w-3.5 h-3.5 text-emerald-400" />
+              <Navigation className="w-3.5 h-3.5 text-emerald-600" />
               <span>Detect GPS</span>
             </button>
 
@@ -1109,10 +1109,10 @@ export const Interactive3DGlobe: React.FC = () => {
                 soundService.playClick(260, 0.02);
                 setAutoRotate(!autoRotate);
               }}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-medium border transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-medium border transition-all cursor-pointer shadow-xs ${
                 autoRotate
-                  ? 'bg-indigo-950/40 border-indigo-500/40 text-indigo-300'
-                  : 'bg-white/[0.05] border-white/[0.1] text-slate-400 hover:text-white'
+                  ? 'bg-blue-50 border-blue-300 text-[#0059e8] font-semibold'
+                  : 'bg-white border-slate-200/90 text-slate-700 hover:text-slate-900'
               }`}
               title="Toggle planetary auto-rotation"
             >
@@ -1125,17 +1125,17 @@ export const Interactive3DGlobe: React.FC = () => {
                 soundService.playClick(300, 0.02);
                 setTextureKey(textureKey === 'blueMarble' ? 'nightLights' : 'blueMarble');
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-medium bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white border border-white/[0.1] transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-medium bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200/90 transition-all cursor-pointer shadow-xs"
               title="Toggle satellite vs night lights surface layer"
             >
               {textureKey === 'blueMarble' ? (
                 <>
-                  <Sun className="w-3.5 h-3.5 text-amber-400" />
+                  <Sun className="w-3.5 h-3.5 text-amber-500" />
                   <span>Blue Marble</span>
                 </>
               ) : (
                 <>
-                  <Layers className="w-3.5 h-3.5 text-indigo-400" />
+                  <Layers className="w-3.5 h-3.5 text-[#0059e8]" />
                   <span>Night Lights</span>
                 </>
               )}
@@ -1146,21 +1146,21 @@ export const Interactive3DGlobe: React.FC = () => {
                 soundService.playClick(320, 0.02);
                 setShowClouds(!showClouds);
               }}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-medium border transition-all cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-medium border transition-all cursor-pointer shadow-xs ${
                 showClouds
-                  ? 'bg-sky-950/40 border-sky-500/40 text-sky-300'
-                  : 'bg-white/[0.05] border-white/[0.1] text-slate-400 hover:text-white'
+                  ? 'bg-sky-50 border-sky-300 text-sky-700 font-semibold'
+                  : 'bg-white border-slate-200/90 text-slate-700 hover:text-slate-900'
               }`}
               title="Toggle 3D atmospheric cloud layer"
             >
-              <Cloud className="w-3.5 h-3.5 text-sky-400" />
+              <Cloud className="w-3.5 h-3.5 text-sky-500" />
               <span>{showClouds ? 'Clouds ON' : 'Clouds OFF'}</span>
             </button>
           </div>
         </div>
 
         {/* Feature Navigation Tabs */}
-        <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-[#090b14] border border-white/[0.08] text-xs font-mono">
+        <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-100/90 border border-slate-200/90 text-xs font-mono shadow-xs">
           <button
             onClick={() => {
               setActiveTab('telemetry');
@@ -1168,11 +1168,11 @@ export const Interactive3DGlobe: React.FC = () => {
             }}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
               activeTab === 'telemetry'
-                ? 'bg-indigo-600 text-white font-bold shadow-md shadow-indigo-600/30'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-[#0059e8] text-white font-bold shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
             }`}
           >
-            <Activity className="w-3.5 h-3.5 text-indigo-300" />
+            <Activity className="w-3.5 h-3.5 text-blue-200" />
             <span>1. Edge Latency &amp; PoP Ping</span>
           </button>
 
@@ -1183,11 +1183,11 @@ export const Interactive3DGlobe: React.FC = () => {
             }}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
               activeTab === 'cables'
-                ? 'bg-cyan-600 text-white font-bold shadow-md shadow-cyan-600/30'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-cyan-600 text-white font-bold shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
             }`}
           >
-            <Network className="w-3.5 h-3.5 text-cyan-300" />
+            <Network className="w-3.5 h-3.5 text-cyan-200" />
             <span>2. Subsea Fiber Cables (2Africa &amp; SEACOM)</span>
           </button>
 
@@ -1198,11 +1198,11 @@ export const Interactive3DGlobe: React.FC = () => {
             }}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
               activeTab === 'postgis'
-                ? 'bg-emerald-600 text-white font-bold shadow-md shadow-emerald-600/30'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
             }`}
           >
-            <Database className="w-3.5 h-3.5 text-emerald-300" />
+            <Database className="w-3.5 h-3.5 text-emerald-200" />
             <span>3. PostGIS ST_DWithin Spatial Lab</span>
           </button>
 
@@ -1213,11 +1213,11 @@ export const Interactive3DGlobe: React.FC = () => {
             }}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
               activeTab === 'flight'
-                ? 'bg-pink-600 text-white font-bold shadow-md shadow-pink-600/30'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-pink-600 text-white font-bold shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
             }`}
           >
-            <Plane className="w-3.5 h-3.5 text-pink-300" />
+            <Plane className="w-3.5 h-3.5 text-pink-200" />
             <span>4. Flight Simulator &amp; Antipode</span>
           </button>
 
@@ -1228,11 +1228,11 @@ export const Interactive3DGlobe: React.FC = () => {
             }}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
               activeTab === 'hexbin'
-                ? 'bg-amber-600 text-white font-bold shadow-md shadow-amber-600/30'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                ? 'bg-amber-600 text-white font-bold shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white/70'
             }`}
           >
-            <BarChart3 className="w-3.5 h-3.5 text-amber-300" />
+            <BarChart3 className="w-3.5 h-3.5 text-amber-200" />
             <span>5. Global Contributor Hexbin Heatmap</span>
           </button>
         </div>
@@ -1242,25 +1242,25 @@ export const Interactive3DGlobe: React.FC = () => {
           <div
             className={`p-3.5 px-4 rounded-xl border flex items-center justify-between gap-3 text-xs font-mono transition-all animate-in fade-in duration-300 ${
               geoStatus === 'granted'
-                ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-300'
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-900 shadow-xs'
                 : geoStatus === 'fallback' || geoStatus === 'denied'
-                ? 'bg-amber-950/40 border-amber-500/30 text-amber-200'
-                : 'bg-indigo-950/40 border-indigo-500/30 text-indigo-300'
+                ? 'bg-amber-50 border-amber-300 text-amber-900 shadow-xs'
+                : 'bg-blue-50 border-blue-300 text-blue-900 shadow-xs'
             }`}
           >
             <div className="flex items-center gap-2.5">
               {geoStatus === 'granted' ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
               ) : geoStatus === 'fallback' || geoStatus === 'denied' ? (
-                <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
               ) : (
-                <Radio className="w-4 h-4 text-indigo-400 animate-pulse shrink-0" />
+                <Radio className="w-4 h-4 text-[#0059e8] animate-pulse shrink-0" />
               )}
-              <span>{statusMessage}</span>
+              <span className="font-medium text-slate-900">{statusMessage}</span>
             </div>
             <button
               onClick={() => setShowStatusToast(false)}
-              className="text-slate-400 hover:text-white text-xs underline font-sans cursor-pointer"
+              className="text-slate-600 hover:text-slate-900 text-xs font-semibold underline font-sans cursor-pointer"
             >
               Dismiss
             </button>
@@ -1270,7 +1270,7 @@ export const Interactive3DGlobe: React.FC = () => {
         {/* Main 3D Globe & Dynamic Interactive Telemetry Viewport */}
         <div
           ref={containerRef}
-          className="relative w-full rounded-2xl bg-[#06070d] border border-white/[0.1] shadow-2xl overflow-hidden min-h-[580px] flex items-center justify-center select-none"
+          className="relative w-full rounded-2xl bg-[#070e1c] border border-slate-300 shadow-xl overflow-hidden min-h-[580px] flex items-center justify-center select-none"
         >
           {/* Globe Canvas (Client-side & Viewport proximity protected) */}
           {isMounted && isVisible ? (
@@ -1391,25 +1391,25 @@ export const Interactive3DGlobe: React.FC = () => {
             {userLocation ? (
               <div className="space-y-2">
                 <div>
-                  <div className="text-[10px] text-slate-400 uppercase tracking-wider">City &amp; Region</div>
+                  <div className="text-[10px] text-slate-300 font-semibold uppercase tracking-wider">City &amp; Region</div>
                   <div className="text-sm font-bold text-white font-sans truncate">
                     {userLocation.city || 'Detecting City'}
                     {userLocation.state && userLocation.state !== userLocation.city ? `, ${userLocation.state}` : ''}
                   </div>
-                  <div className="text-[11px] text-slate-300">
+                  <div className="text-[11px] text-slate-200 font-medium">
                     {userLocation.country || 'Global Coordinates'}
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 pt-1 border-t border-white/[0.06]">
                   <div>
-                    <div className="text-[10px] text-slate-400 uppercase tracking-wider">Coordinates</div>
+                    <div className="text-[10px] text-slate-300 font-semibold uppercase tracking-wider">Coordinates</div>
                     <div className="text-white font-bold text-[11px]">
                       {formatCoordinates(userLocation.lat, userLocation.lng)}
                     </div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-slate-400 uppercase tracking-wider">Accuracy</div>
+                    <div className="text-[10px] text-slate-300 font-semibold uppercase tracking-wider">Accuracy</div>
                     <div className="text-emerald-400 font-bold text-[11px]">
                       {userLocation.accuracy ? `±${userLocation.accuracy}m` : 'IP Geo Block'}
                     </div>
@@ -1417,19 +1417,19 @@ export const Interactive3DGlobe: React.FC = () => {
                 </div>
 
                 {/* Local Clock & Subsolar Noon Position */}
-                <div className="pt-1 border-t border-white/[0.06] flex items-center justify-between text-slate-300">
-                  <div className="flex items-center gap-1.5">
+                <div className="pt-1 border-t border-white/[0.06] flex items-center justify-between text-slate-200">
+                  <div className="flex items-center gap-1.5 font-medium">
                     <Clock className="w-3.5 h-3.5 text-indigo-400" />
                     <span>{currentTimeStr || 'Syncing clock...'}</span>
                   </div>
-                  <span className="text-[10px] text-amber-400 flex items-center gap-1" title="Solar Subsolar Position">
+                  <span className="text-[10px] text-amber-300 font-semibold flex items-center gap-1" title="Solar Subsolar Position">
                     <Sun className="w-3 h-3" />
                     <span>Sun: {Math.round(subsolarPoint.lng)}°</span>
                   </span>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-2 text-slate-400 py-3">
+              <div className="flex items-center gap-2 text-slate-300 py-3 font-medium">
                 <div className="w-3.5 h-3.5 border border-indigo-400 border-t-transparent rounded-full animate-spin" />
                 <span>Reading coordinate signals...</span>
               </div>
@@ -1524,25 +1524,25 @@ export const Interactive3DGlobe: React.FC = () => {
 
                 <div className="space-y-1.5 text-[11px]">
                   <div className="flex items-center justify-between text-cyan-300">
-                    <span className="flex items-center gap-1.5">
+                    <span className="flex items-center gap-1.5 font-semibold">
                       <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
                       <span>2Africa Subsea Ring</span>
                     </span>
-                    <span className="font-mono text-slate-400">180 Tbps · 45,000 km</span>
+                    <span className="font-mono text-slate-200 font-medium">180 Tbps · 45,000 km</span>
                   </div>
                   <div className="flex items-center justify-between text-amber-300">
-                    <span className="flex items-center gap-1.5">
+                    <span className="flex items-center gap-1.5 font-semibold">
                       <span className="w-2 h-2 rounded-full bg-amber-400" />
                       <span>SEACOM / EASSy</span>
                     </span>
-                    <span className="font-mono text-slate-400">12 Tbps · 17,000 km</span>
+                    <span className="font-mono text-slate-200 font-medium">12 Tbps · 17,000 km</span>
                   </div>
                   <div className="flex items-center justify-between text-pink-300">
-                    <span className="flex items-center gap-1.5">
+                    <span className="flex items-center gap-1.5 font-semibold">
                       <span className="w-2 h-2 rounded-full bg-pink-400" />
                       <span>Mombasa-Kisumu Terrestrial</span>
                     </span>
-                    <span className="font-mono text-slate-400">Low-Latency Dark Fiber</span>
+                    <span className="font-mono text-slate-200 font-medium">Low-Latency Dark Fiber</span>
                   </div>
                 </div>
               </div>
@@ -1564,7 +1564,7 @@ export const Interactive3DGlobe: React.FC = () => {
                 {/* Radius Slider */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-slate-400">Spatial Radius Threshold:</span>
+                    <span className="text-slate-200 font-medium">Spatial Radius Threshold:</span>
                     <span className="text-emerald-400 font-bold">{postgisRadiusKm} km</span>
                   </div>
                   <input
@@ -1582,18 +1582,18 @@ export const Interactive3DGlobe: React.FC = () => {
                 </div>
 
                 {/* Spatial SQL Query Box */}
-                <div className="p-2.5 rounded-lg bg-black/60 border border-white/[0.08] text-[10px] font-mono text-slate-300 space-y-1">
+                <div className="p-2.5 rounded-lg bg-black/60 border border-white/[0.08] text-[10px] font-mono text-slate-200 space-y-1">
                   <div className="text-indigo-300 font-bold">SQL ST_DWithin Query:</div>
-                  <code className="text-slate-400 block truncate">
+                  <code className="text-slate-200 block truncate font-mono">
                     SELECT id, sensor_type FROM spatial_nodes WHERE ST_DWithin(geom, ST_SetSRID(ST_Point({postgisCenter.lng.toFixed(2)}, {postgisCenter.lat.toFixed(2)}), 4326)::geography, {postgisRadiusKm * 1000});
                   </code>
-                  <div className="flex justify-between pt-1 border-t border-white/[0.06] text-emerald-400">
+                  <div className="flex justify-between pt-1 border-t border-white/[0.06] text-emerald-400 font-medium">
                     <span>Captured: {postgisFilteredNodes.length} nodes</span>
                     <span>Hilbert Cache Hits: 99.4%</span>
                   </div>
                 </div>
 
-                <div className="text-[10px] text-slate-400">
+                <div className="text-[10px] text-slate-300 font-medium">
                   Tip: Click anywhere on the globe to move the spatial query epicenter.
                 </div>
               </div>
@@ -1623,18 +1623,18 @@ export const Interactive3DGlobe: React.FC = () => {
                 {isFlying ? (
                   <div className="space-y-1.5">
                     <div className="flex justify-between text-[11px]">
-                      <span className="text-slate-400">Low-Altitude Flight Progress:</span>
+                      <span className="text-slate-200 font-medium">Low-Altitude Flight Progress:</span>
                       <span className="text-pink-400 font-bold">{flightProgress}%</span>
                     </div>
                     <div className="w-full h-2 rounded-full bg-white/[0.1] overflow-hidden">
                       <div className="h-full bg-gradient-to-r from-pink-500 to-indigo-500 transition-all duration-300" style={{ width: `${flightProgress}%` }} />
                     </div>
-                    <div className="text-[10px] text-slate-400">
+                    <div className="text-[10px] text-slate-300 font-medium">
                       Camera swooping at altitude 0.42 along Great-Circle route into Kisumu Systems Lab.
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-2 text-[11px] text-slate-300">
+                  <div className="space-y-2 text-[11px] text-slate-200 leading-relaxed font-medium">
                     <p className="leading-relaxed">
                       Swoop from your verified position directly to Christian&apos;s Systems Lab in Kisumu, or tunnel straight through the Earth core to your antipode.
                     </p>
@@ -1758,42 +1758,42 @@ export const Interactive3DGlobe: React.FC = () => {
 
         {/* Feature Highlights Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
-          <div className="p-4 rounded-xl bg-[#080a12] border border-white/[0.08] space-y-1.5">
-            <div className="flex items-center gap-2 text-indigo-400 text-xs font-mono font-semibold">
-              <Activity className="w-4 h-4 text-indigo-400" />
-              <span>Edge PoP Telemetry</span>
+          <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-all space-y-1.5">
+            <div className="flex items-center gap-2 text-[#0059e8] text-xs font-mono font-bold">
+              <Activity className="w-4 h-4 text-[#0059e8]" />
+              <span className="text-slate-900 font-sans">Edge PoP Telemetry</span>
             </div>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed font-sans">
               Live ping testing to 10 edge PoPs measuring packet flight time, jitter, and lowest-latency route.
             </p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#080a12] border border-white/[0.08] space-y-1.5">
-            <div className="flex items-center gap-2 text-cyan-400 text-xs font-mono font-semibold">
-              <Network className="w-4 h-4 text-cyan-400" />
-              <span>Subsea Fiber Cables</span>
+          <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-all space-y-1.5">
+            <div className="flex items-center gap-2 text-cyan-600 text-xs font-mono font-bold">
+              <Network className="w-4 h-4 text-cyan-600" />
+              <span className="text-slate-900 font-sans">Subsea Fiber Cables</span>
             </div>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed font-sans">
               3D pathways for 2Africa, SEACOM, and PEACE cables landing at Mombasa and routing into Kisumu.
             </p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#080a12] border border-white/[0.08] space-y-1.5">
-            <div className="flex items-center gap-2 text-teal-400 text-xs font-mono font-semibold">
-              <Database className="w-4 h-4 text-teal-400" />
-              <span>PostGIS Spatial Lab</span>
+          <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-all space-y-1.5">
+            <div className="flex items-center gap-2 text-emerald-600 text-xs font-mono font-bold">
+              <Database className="w-4 h-4 text-emerald-600" />
+              <span className="text-slate-900 font-sans">PostGIS Spatial Lab</span>
             </div>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed font-sans">
               Interactive radius slider filtering agricultural sensors with GiST R-Tree index verification.
             </p>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#080a12] border border-white/[0.08] space-y-1.5">
-            <div className="flex items-center gap-2 text-pink-400 text-xs font-mono font-semibold">
-              <Plane className="w-4 h-4 text-pink-400" />
-              <span>Flight Sim &amp; Antipode</span>
+          <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-xs hover:shadow-md transition-all space-y-1.5">
+            <div className="flex items-center gap-2 text-rose-600 text-xs font-mono font-bold">
+              <Plane className="w-4 h-4 text-rose-600" />
+              <span className="text-slate-900 font-sans">Flight Sim &amp; Antipode</span>
             </div>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed font-sans">
               Cinematic low-altitude Great-Circle flyover camera into Kisumu and Earth core tunneling calculations.
             </p>
           </div>

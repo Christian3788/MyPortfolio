@@ -204,30 +204,30 @@ export const GravitationalLensingSimulator: React.FC = () => {
   const calcEinsteinThetaArcsec = (mass * 1.84).toFixed(2);
 
   return (
-    <div className="rounded-xl bg-[#07080c] border border-white/[0.08] p-4 sm:p-5 space-y-4">
+    <div className="rounded-xl bg-white border border-slate-200/90 p-4 sm:p-5 space-y-4 shadow-sm">
       
       {/* Header with Title & Reset */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-mono">
-        <div className="flex items-center gap-2 text-slate-200">
-          <Atom className="w-4 h-4 text-indigo-400" />
-          <span className="font-semibold text-white">General Relativity · Gravitational Lensing Canvas</span>
+        <div className="flex items-center gap-2 text-slate-900">
+          <Atom className="w-4 h-4 text-[#0059e8]" />
+          <span className="font-semibold text-slate-900">General Relativity · Gravitational Lensing Canvas</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-[11px] text-slate-400">
+          <span className="text-[11px] text-slate-700 font-medium">
             Singularity at ({Math.round(lensPos.x)}, {Math.round(lensPos.y)})
           </span>
           <button
             onClick={resetPosition}
-            className="p-1 rounded text-slate-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] transition-colors"
+            className="p-1.5 rounded text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 transition-colors"
             title="Reset Mass Coordinates"
           >
-            <RefreshCw className="w-3 h-3" />
+            <RefreshCw className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
       {/* Interactive Simulation Canvas */}
-      <div className="relative w-full rounded-lg overflow-hidden border border-white/[0.08] cursor-grab active:cursor-grabbing shadow-inner">
+      <div className="relative w-full rounded-lg overflow-hidden border border-slate-300 cursor-grab active:cursor-grabbing shadow-inner bg-black">
         <canvas
           ref={canvasRef}
           width={600}
@@ -239,12 +239,12 @@ export const GravitationalLensingSimulator: React.FC = () => {
         />
 
         {/* Floating Canvas Overlays */}
-        <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5 px-2 py-0.5 rounded bg-black/60 backdrop-blur-md border border-white/10 text-[10px] text-slate-300 font-mono">
-          <Move className="w-3 h-3 text-indigo-400" />
+        <div className="absolute top-2 left-2 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded bg-black/70 backdrop-blur-md border border-white/20 text-[10px] text-white font-mono">
+          <Move className="w-3 h-3 text-[#0059e8]" />
           <span>Drag mass to bend light rays in real time</span>
         </div>
 
-        <div className="absolute bottom-2 right-2 z-10 px-2 py-0.5 rounded bg-black/70 backdrop-blur-md border border-indigo-500/30 text-[10px] text-indigo-300 font-mono">
+        <div className="absolute bottom-2 right-2 z-10 px-2.5 py-1 rounded bg-black/80 backdrop-blur-md border border-[#0059e8]/50 text-[10px] text-blue-200 font-mono">
           <span>θ_E = {calcEinsteinThetaArcsec}″ · R_s = {calcRsKm} km</span>
         </div>
       </div>
@@ -254,9 +254,9 @@ export const GravitationalLensingSimulator: React.FC = () => {
         
         {/* Mass Slider */}
         <div className="sm:col-span-6 space-y-1.5">
-          <div className="flex justify-between text-slate-400">
+          <div className="flex justify-between text-slate-800 font-semibold">
             <span>Stellar Mass (M_☉):</span>
-            <span className="text-white font-bold">{mass.toFixed(1)} M_☉</span>
+            <span className="text-slate-900 font-bold">{mass.toFixed(1)} M_☉</span>
           </div>
           <input
             type="range"
@@ -265,18 +265,18 @@ export const GravitationalLensingSimulator: React.FC = () => {
             step="0.2"
             value={mass}
             onChange={(e) => setMass(Number(e.target.value))}
-            className="w-full accent-indigo-500 bg-slate-800 rounded-lg cursor-pointer h-1.5"
+            className="w-full accent-[#0059e8] bg-slate-200 rounded-lg cursor-pointer h-2"
           />
         </div>
 
         {/* Accretion Disk Toggle */}
         <div className="sm:col-span-6 flex items-center justify-between sm:justify-end gap-3">
-          <label className="flex items-center gap-2 cursor-pointer text-slate-300 hover:text-white">
+          <label className="flex items-center gap-2 cursor-pointer text-slate-800 hover:text-slate-900 font-semibold">
             <input
               type="checkbox"
               checked={showAccretion}
               onChange={(e) => setShowAccretion(e.target.checked)}
-              className="accent-indigo-500 rounded cursor-pointer"
+              className="accent-[#0059e8] rounded cursor-pointer w-4 h-4"
             />
             <span className="text-[11px]">Accretion Disk Doppler Boost</span>
           </label>
@@ -285,12 +285,12 @@ export const GravitationalLensingSimulator: React.FC = () => {
       </div>
 
       {/* Formula & Method Note */}
-      <div className="p-3 rounded-lg bg-white/[0.02] border border-white/[0.04] text-[11px] font-mono text-slate-400 space-y-1">
-        <div className="text-slate-300 font-medium">Relativistic Ray-Tracing Formulation:</div>
-        <div>
+      <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-[11px] font-mono text-slate-700 space-y-1">
+        <div className="text-slate-900 font-bold">Relativistic Ray-Tracing Formulation:</div>
+        <div className="text-slate-800 font-medium">
           $\hat&#123;\alpha&#125; = \frac&#123;4GM&#125;&#123;c^2 b&#125;$ · Einstein Ring Radius: $\theta_E = \sqrt&#123;\frac&#123;4GM&#125;&#123;c^2&#125; \frac&#123;D_&#123;LS&#125;&#125;&#123;D_L D_S&#125;&#125;$
         </div>
-        <div className="text-slate-500 text-[10px]">
+        <div className="text-slate-700 text-[10px] font-medium">
           Simulates null geodesic bending around a static Schwarzschild metric with Keplerian accretion velocities.
         </div>
       </div>

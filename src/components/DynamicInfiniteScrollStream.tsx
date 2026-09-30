@@ -162,20 +162,20 @@ export const DynamicInfiniteScrollStream: React.FC = () => {
   });
 
   return (
-    <section id="engineering-stream" className="py-20 border-t border-white/[0.08]">
+    <section id="engineering-stream" className="py-20 border-t border-slate-200/90 bg-[#f8fafd]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         
         {/* Header & Controls */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-white/[0.08]">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200/80">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-indigo-400 uppercase font-mono mb-2">
-              <Sparkles className="w-4 h-4 text-indigo-400" />
-              <span>10. Continuous Engineering Logs · Technical Stream</span>
+            <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-[#0059e8] uppercase font-mono mb-2">
+              <Sparkles className="w-4 h-4 text-[#0059e8]" />
+              <span>11. Continuous Engineering Logs · Technical Stream</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-display">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 font-display">
               Systems Dispatches &amp; Technical Stream
             </h2>
-            <p className="text-sm text-slate-400 max-w-xl mt-1">
+            <p className="text-sm text-slate-700 font-medium max-w-xl mt-1">
               An endless, dynamically generated engineering feed covering Go runtime internals, PostGIS spatial indexing, kernel I/O, and distributed consistency.
             </p>
           </div>
@@ -183,15 +183,15 @@ export const DynamicInfiniteScrollStream: React.FC = () => {
           {/* Tag Filters & Auto-scroll Toggle */}
           <div className="flex flex-wrap items-center gap-3">
             {/* Tag Pills */}
-            <div className="flex items-center p-1 rounded-xl bg-[#08090f] border border-white/[0.08] text-xs font-mono">
+            <div className="flex items-center p-1 rounded-xl bg-white border border-slate-200 text-xs font-mono shadow-xs">
               {['all', 'go', 'databases', 'systems'].map((tag) => (
                 <button
                   key={tag}
                   onClick={() => setSelectedTag(tag)}
-                  className={`px-3 py-1.5 rounded-lg capitalize transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg capitalize transition-colors cursor-pointer ${
                     selectedTag === tag
-                      ? 'bg-indigo-600 text-white font-semibold'
-                      : 'text-slate-400 hover:text-white'
+                      ? 'bg-[#0059e8] text-white font-bold shadow-xs'
+                      : 'text-slate-700 hover:text-slate-900 font-medium'
                   }`}
                 >
                   {tag}
@@ -202,14 +202,14 @@ export const DynamicInfiniteScrollStream: React.FC = () => {
             {/* Autoscroll Toggle */}
             <button
               onClick={() => setAutoScrollEnabled(!autoScrollEnabled)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono border transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-mono border transition-colors shadow-xs cursor-pointer ${
                 autoScrollEnabled
-                  ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300'
-                  : 'bg-white/[0.04] border-white/[0.08] text-slate-400 hover:text-white'
+                  ? 'bg-emerald-50 border-emerald-300 text-emerald-900 font-semibold'
+                  : 'bg-white border-slate-300 text-slate-700 hover:text-slate-900 font-medium'
               }`}
               title="Toggle automatic generation on scroll"
             >
-              <span className={`w-2 h-2 rounded-full ${autoScrollEnabled ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'}`} />
+              <span className={`w-2 h-2 rounded-full ${autoScrollEnabled ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'}`} />
               <span>{autoScrollEnabled ? 'Infinite Scroll ON' : 'Infinite Scroll OFF'}</span>
             </button>
           </div>
@@ -220,28 +220,28 @@ export const DynamicInfiniteScrollStream: React.FC = () => {
           {filteredLogs.map((item, index) => (
             <article
               key={item.id}
-              className="p-6 sm:p-8 rounded-2xl bg-[#090b12] border border-white/[0.08] hover:border-indigo-500/40 transition-all duration-300 shadow-xl space-y-5 group"
+              className="p-6 sm:p-8 rounded-2xl bg-white border border-slate-200/90 hover:border-[#0059e8]/50 transition-all duration-300 shadow-xs hover:shadow-md space-y-5 group"
             >
               {/* Meta row */}
-              <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-400 pb-3 border-b border-white/[0.06]">
+              <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-700 font-medium pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
-                  <span className="text-indigo-400 font-semibold">{item.category}</span>
-                  <span aria-hidden="true" className="text-slate-600">·</span>
-                  <span className="text-slate-300">{item.tag}</span>
-                  <span aria-hidden="true" className="text-slate-600">·</span>
-                  <span>{item.readTime}</span>
+                  <span className="text-[#0059e8] font-bold">{item.category}</span>
+                  <span aria-hidden="true" className="text-slate-400 font-bold">·</span>
+                  <span className="text-slate-800 font-semibold">{item.tag}</span>
+                  <span aria-hidden="true" className="text-slate-400 font-bold">·</span>
+                  <span className="text-slate-600">{item.readTime}</span>
                 </div>
-                <div className="text-slate-500">
+                <div className="text-slate-600 font-semibold">
                   Dispatch #{index + 1}
                 </div>
               </div>
 
               {/* Title & Excerpt */}
               <div className="space-y-2">
-                <h3 className="text-xl sm:text-2xl font-bold text-white font-display group-hover:text-indigo-300 transition-colors">
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 font-display group-hover:text-[#0059e8] transition-colors">
                   {item.title}
                 </h3>
-                <p className="text-sm text-slate-300 leading-relaxed">
+                <p className="text-sm text-slate-700 leading-relaxed font-normal">
                   {item.excerpt}
                 </p>
               </div>
@@ -251,31 +251,31 @@ export const DynamicInfiniteScrollStream: React.FC = () => {
                 
                 {/* Technical Analysis (Col 6) */}
                 <div className="lg:col-span-6 space-y-4">
-                  <div className="p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] space-y-2">
-                    <div className="text-xs font-mono font-semibold text-indigo-400">
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                    <div className="text-xs font-mono font-bold text-[#0059e8]">
                       Engineering Mechanics &amp; Invariants:
                     </div>
-                    <p className="text-xs text-slate-300 leading-relaxed font-sans">
+                    <p className="text-xs text-slate-800 leading-relaxed font-sans">
                       {item.technicalDeepDive}
                     </p>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-indigo-950/20 border border-indigo-500/20 text-xs font-mono text-indigo-300 flex items-start gap-2">
-                    <span className="text-emerald-400 font-bold shrink-0">Rule:</span>
-                    <span>{item.architectureTakeaway}</span>
+                  <div className="p-3.5 rounded-xl bg-blue-50/80 border border-blue-200 text-xs font-mono text-[#0b3888] flex items-start gap-2">
+                    <span className="text-emerald-700 font-bold shrink-0">Rule:</span>
+                    <span className="text-slate-800 font-medium">{item.architectureTakeaway}</span>
                   </div>
                 </div>
 
                 {/* Code Window (Col 6) */}
-                <div className="lg:col-span-6 rounded-xl bg-[#050609] border border-white/[0.08] overflow-hidden shadow-lg">
-                  <div className="px-4 py-2 bg-white/[0.02] border-b border-white/[0.06] flex items-center justify-between text-xs font-mono text-slate-400">
+                <div className="lg:col-span-6 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden shadow-sm">
+                  <div className="px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-xs font-mono text-slate-300">
                     <div className="flex items-center gap-2">
-                      <Terminal className="w-3.5 h-3.5 text-indigo-400" />
+                      <Terminal className="w-3.5 h-3.5 text-[#0059e8]" />
                       <span>{item.language.toLowerCase()}_implementation.{item.language === 'go' ? 'go' : item.language === 'sql' ? 'sql' : 'ts'}</span>
                     </div>
                     <button
                       onClick={() => copyCode(item.id, item.codeSnippet)}
-                      className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] text-slate-400 hover:text-white bg-white/[0.05] hover:bg-white/[0.1] transition-colors"
+                      className="flex items-center gap-1 px-2.5 py-0.5 rounded text-[11px] text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors"
                     >
                       {copiedId === item.id ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                       <span>{copiedId === item.id ? 'Copied' : 'Copy'}</span>
@@ -294,20 +294,20 @@ export const DynamicInfiniteScrollStream: React.FC = () => {
         {/* Loading Indicator & Sentinel for Infinite Scroll */}
         <div ref={sentinelRef} className="py-6 flex flex-col items-center justify-center space-y-3">
           {isLoadingMore ? (
-            <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-[#090b14] border border-indigo-500/30 text-indigo-300 text-xs font-mono shadow-lg animate-pulse">
-              <RefreshCw className="w-4 h-4 animate-spin text-indigo-400" />
+            <div className="flex items-center gap-3 px-5 py-3 rounded-xl bg-white border border-[#0059e8]/40 text-[#0059e8] text-xs font-mono shadow-md animate-pulse">
+              <RefreshCw className="w-4 h-4 animate-spin text-[#0059e8]" />
               <span>Synthesizing next technical dispatch via Gemini...</span>
             </div>
           ) : (
             <button
               onClick={fetchNextLogs}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-indigo-500/40 text-xs font-mono text-slate-300 hover:text-white transition-all shadow-md group"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 hover:border-[#0059e8]/50 text-xs font-mono text-slate-700 hover:text-[#0059e8] transition-all shadow-xs group"
             >
               <span>Load More Systems Dispatches</span>
               <ArrowDown className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" />
             </button>
           )}
-          <span className="text-[11px] text-slate-500 font-mono">
+          <span className="text-xs text-slate-700 font-mono font-medium">
             {logs.length} Technical Dispatches Loaded · Seamless Infinite Scroll
           </span>
         </div>

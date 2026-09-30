@@ -23,16 +23,16 @@ export const GisSimulatorWidget: React.FC = () => {
   };
 
   return (
-    <div className="rounded-xl bg-[#07080c] border border-white/[0.08] p-4 space-y-4">
+    <div className="rounded-xl bg-white border border-slate-200/90 p-4 space-y-4 shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between text-xs font-mono">
-        <div className="flex items-center gap-2 text-slate-300">
-          <Database className="w-3.5 h-3.5 text-indigo-400" />
+        <div className="flex items-center gap-2 text-slate-800 font-semibold">
+          <Database className="w-3.5 h-3.5 text-[#0059e8]" />
           <span>PostGIS GiST Spatial Engine Simulator</span>
         </div>
         <button
           onClick={() => setShowSql(!showSql)}
-          className="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1"
+          className="text-xs text-[#0059e8] hover:text-[#0048c4] flex items-center gap-1 cursor-pointer font-medium"
         >
           <Code2 className="w-3 h-3" />
           <span>{showSql ? 'Hide SQL' : 'View SQL Query'}</span>
@@ -42,22 +42,22 @@ export const GisSimulatorWidget: React.FC = () => {
       {/* Coordinate Canvas */}
       <div
         onClick={handleCanvasClick}
-        className="relative w-full h-36 bg-[#040508] rounded-lg border border-white/[0.06] overflow-hidden cursor-crosshair group select-none"
+        className="relative w-full h-36 bg-slate-900 rounded-lg border border-slate-800 overflow-hidden cursor-crosshair group select-none shadow-inner"
       >
         {/* Grid lines */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:24px_24px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#33415525_1px,transparent_1px),linear-gradient(to_bottom,#33415525_1px,transparent_1px)] bg-[size:24px_24px]" />
 
         {/* Hazard Polygons */}
-        <div className="absolute top-4 left-8 w-28 h-20 rounded-[40%_60%_70%_30%] bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-[10px] text-rose-400 font-mono pointer-events-none">
+        <div className="absolute top-4 left-8 w-28 h-20 rounded-[40%_60%_70%_30%] bg-rose-500/15 border border-rose-500/40 flex items-center justify-center text-[10px] text-rose-300 font-mono pointer-events-none">
           Flood Hazard Zone
         </div>
-        <div className="absolute bottom-3 right-12 w-32 h-16 rounded-[60%_40%_30%_70%] bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-[10px] text-amber-400 font-mono pointer-events-none">
+        <div className="absolute bottom-3 right-12 w-32 h-16 rounded-[60%_40%_30%_70%] bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-[10px] text-amber-300 font-mono pointer-events-none">
           Urban Heat Island
         </div>
 
         {/* Selected Radius Ring */}
         <div
-          className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-indigo-400/60 bg-indigo-500/10 pointer-events-none transition-all duration-150"
+          className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#0059e8]/80 bg-[#0059e8]/15 pointer-events-none transition-all duration-150"
           style={{
             left: `${selectedCoord.x}px`,
             top: `${selectedCoord.y}px`,
@@ -68,22 +68,22 @@ export const GisSimulatorWidget: React.FC = () => {
 
         {/* Pin */}
         <div
-          className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none text-indigo-400"
+          className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none text-[#0059e8]"
           style={{ left: `${selectedCoord.x}px`, top: `${selectedCoord.y}px` }}
         >
-          <MapPin className="w-4 h-4 fill-indigo-500 drop-shadow-md" />
+          <MapPin className="w-4 h-4 fill-[#0059e8] text-white drop-shadow-md" />
         </div>
 
         {/* Helper Hint */}
-        <div className="absolute bottom-2 left-2 text-[10px] text-slate-500 font-mono pointer-events-none">
+        <div className="absolute bottom-2 left-2 text-[10px] text-slate-700 font-mono font-medium pointer-events-none">
           Click anywhere to trigger ST_DWithin spatial intersect
         </div>
       </div>
 
       {/* SQL Preview Box */}
       {showSql && (
-        <div className="p-2.5 rounded bg-black/50 border border-white/[0.04] text-[11px] font-mono text-slate-300">
-          <span className="text-slate-500">-- PostGIS Query Execution</span>
+        <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-200">
+          <span className="text-slate-300 font-bold">-- PostGIS Query Execution</span>
           <br />
           SELECT id, hazard_level FROM urban_vulnerability_layers
           <br />
@@ -94,19 +94,19 @@ export const GisSimulatorWidget: React.FC = () => {
       {/* Controls & Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
         {/* Toggle GiST Index */}
-        <div className="p-2.5 rounded-lg bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
           <div className="text-[11px]">
-            <span className="text-slate-400 block font-mono">GiST R-Tree Index</span>
-            <span className={`font-semibold ${useGistIndex ? 'text-emerald-400' : 'text-amber-400'}`}>
+            <span className="text-slate-700 block font-mono font-semibold">GiST R-Tree Index</span>
+            <span className={`font-bold ${useGistIndex ? 'text-emerald-700' : 'text-amber-800'}`}>
               {useGistIndex ? 'ENABLED (Optimal)' : 'DISABLED (Seq Scan)'}
             </span>
           </div>
           <button
             onClick={() => setUseGistIndex(!useGistIndex)}
-            className="text-slate-300 hover:text-white"
+            className="text-slate-700 hover:text-slate-900 cursor-pointer"
           >
             {useGistIndex ? (
-              <ToggleRight className="w-6 h-6 text-indigo-500" />
+              <ToggleRight className="w-6 h-6 text-[#0059e8]" />
             ) : (
               <ToggleLeft className="w-6 h-6 text-slate-500" />
             )}
@@ -114,10 +114,10 @@ export const GisSimulatorWidget: React.FC = () => {
         </div>
 
         {/* Radius Slider */}
-        <div className="p-2.5 rounded-lg bg-white/[0.02] border border-white/[0.06] space-y-1">
+        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
           <div className="flex items-center justify-between text-[11px] font-mono">
-            <span className="text-slate-400">Radius (ST_DWithin)</span>
-            <span className="text-white font-semibold">{radiusMeters / 1000}km</span>
+            <span className="text-slate-700 font-medium">Radius (ST_DWithin)</span>
+            <span className="text-slate-900 font-bold">{radiusMeters / 1000}km</span>
           </div>
           <input
             type="range"
@@ -126,21 +126,21 @@ export const GisSimulatorWidget: React.FC = () => {
             step="500"
             value={radiusMeters}
             onChange={(e) => setRadiusMeters(Number(e.target.value))}
-            className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+            className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0059e8]"
           />
         </div>
 
         {/* Benchmark Result */}
-        <div className="p-2.5 rounded-lg bg-white/[0.02] border border-white/[0.06] flex items-center justify-between">
+        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
           <div>
-            <span className="text-[10px] text-slate-500 block font-mono">Query Execution Time</span>
-            <span className={`text-sm font-bold font-mono ${useGistIndex ? 'text-emerald-400' : 'text-rose-400'}`}>
+            <span className="text-[10px] text-slate-700 block font-mono font-medium">Query Execution Time</span>
+            <span className={`text-sm font-bold font-mono ${useGistIndex ? 'text-emerald-700' : 'text-rose-700'}`}>
               {queryTime}
             </span>
           </div>
           <div className="text-right">
-            <span className="text-[10px] text-slate-500 block font-mono">Scan Strategy</span>
-            <span className="text-[11px] text-slate-300 font-mono">
+            <span className="text-[10px] text-slate-700 block font-mono font-medium">Scan Strategy</span>
+            <span className="text-[11px] text-slate-900 font-mono font-bold">
               {useGistIndex ? 'Index Scan' : 'Seq Scan'}
             </span>
           </div>
