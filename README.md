@@ -54,16 +54,17 @@ A high-performance, interactive portfolio and systems engineering showcase for *
 - **Interactive Physics Sliders**: Dynamically tune the **Lens Mass ($M_\odot$)** and observer distance, watching the Einstein ring expand and background stars shear into relativistic arcs.
 - **Accretion Disk Simulation**: Particle-based Keplerian velocity orbital mechanics around the event horizon.
 
-### 7. Interactive 3D Planetary Globe & Real Geolocation Hub (`#interactive-globe`)
+### 7. Interactive 3D Planetary Globe & Global Network Telemetry Hub (`#interactive-globe`)
 - **HTML5 Real Location Detection**: Requests GPS coordinates on mount via `navigator.geolocation.getCurrentPosition`. Displays non-intrusive status toast with graceful fallback to IP-based lookup (`ipapi.co`) when permission is disabled.
 - **OpenStreetMap Nominatim Reverse Geocoding**: Automatically decodes latitude/longitude into physical place names (City, County, State, Country, Flag emoji, and local timezone).
-- **Three.js & `react-globe.gl` High-Fidelity Visuals**:
-  - Renders NASA Blue Marble and Night Lights satellite texture layers with bump topography and atmospheric indigo glow.
-  - Animated pulsing ripple rings (`ringsData`) on both user coordinates and Christian's Systems Lab in Kisumu.
-  - Smooth camera flight animations with `pointOfView({ lat, lng, altitude }, duration)` on geolocation resolve.
-  - Dynamic Great Circle geodesic arcs with animated dash pulse calculating spherical distance and round-trip fiber latency.
-  - Full touch, drag, pan, tilt, pinch-to-zoom, and instant "Fly to My Location" / "Fly to Kisumu" HUD actions.
-- **Next.js App Router Compatible**: Implemented client-side with `'use client'` and SSR guards.
+- **Global Edge Datacenter Latency Probes**: Interactive telemetry probing 10 worldwide edge PoPs (Nairobi, Johannesburg, Frankfurt, London, Virginia, Silicon Valley, São Paulo, Singapore, Tokyo, Sydney) measuring packet flight time, jitter, and lowest-latency route selection.
+- **Undersea Submarine Fiber-Optic Cables**: 3D pathways of major undersea internet backbones (**2Africa, SEACOM, PEACE, TAT-14, and Transpacific Express**) with an interactive "Trace Packet Route to Kisumu" highlighting the Mombasa Cable Landing Station and terrestrial dark fiber overland run.
+- **PostGIS `ST_DWithin` Spatial Playground**: Interactive epicenter and radius slider (100km to 2,500km) executing real-time spatial bounding queries against 60+ agricultural and hydrological IoT telemetry nodes with simulated GiST 2D R-Tree index timings (sub-2ms) and Hilbert space-filling curve cache hit analysis.
+- **Cinematic Geodesic Flight Simulator**: Low-altitude (`altitude: 0.42`) camera flight along the Great-Circle route from the user's location into Christian's Systems Lab in Kisumu with live waypoint tracking.
+- **Planetary Antipode Finder**: Calculates exact antipodal coordinates (`-lat, lng ± 180°`), computes Earth-core direct tunneling distance (12,742 km), and provides a 1-click camera flip.
+- **Global Developer & Stargazer Hexbin Heatmap**: 3D hexagonal density pillars visualizing open-source collaborator and stargazer nodes across global technology hubs.
+- **Realistic Day/Night Solar Terminator & Rotating 3D Clouds**: Calculates live solar noon subsolar point and renders a slowly rotating Three.js atmospheric cloud sphere floating above the terrain.
+- **Next.js App Router Compatible**: Client-side only with `'use client'` directive, SSR mount guards, and `ResizeObserver`.
 
 ### 8. Timezone Overlap Planner & Meeting Dispatch (`#contact`)
 - **Client Geo-Detection**: Dynamically detects the visitor's local timezone via `Intl.DateTimeFormat`.
