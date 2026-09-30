@@ -37,6 +37,7 @@ export default function App() {
   const [events, setEvents] = useState<GithubEvent[]>([]);
   const [featuredProjects] = useState<FeaturedProject[]>(FEATURED_PROJECTS);
   const [experience] = useState(EXPERIENCE_HISTORY);
+  const [persona, setPersona] = useState<'tech-lead' | 'recruiter'>('tech-lead');
 
   // Modals state
   const [selectedProject, setSelectedProject] = useState<FeaturedProject | null>(null);
@@ -133,6 +134,8 @@ export default function App() {
           totalReposCount={repos.length}
           onExploreWorks={handleExploreWorks}
           onContactClick={handleContactClick}
+          audiencePersona={persona}
+          onPersonaChange={setPersona}
         />
 
         {/* 01. Flagship Systems Architecture & Interactive Simulators */}
@@ -228,8 +231,8 @@ export default function App() {
         }}
         onOpenResume={() => setIsResumeModalOpen(true)}
         onOpenSync={() => setIsSyncModalOpen(true)}
-        onSwitchPersona={(persona) => {
-          // Switch persona
+        onSwitchPersona={(p) => {
+          setPersona(p);
         }}
       />
 

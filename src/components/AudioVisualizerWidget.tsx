@@ -44,6 +44,9 @@ export const AudioVisualizerWidget: React.FC = () => {
     try {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
       audioCtxRef.current = ctx;
 
       // Master Gain

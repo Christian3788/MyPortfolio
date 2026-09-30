@@ -222,7 +222,7 @@ export const SystemsLabSection: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="text-xs font-semibold tracking-wider text-indigo-400 uppercase font-mono mb-2">
-              05. Interactive Systems Workbench
+              02. Interactive Systems Workbench
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-display">
               Systems Lab & Hardware Simulation

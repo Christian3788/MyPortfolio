@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Github, MapPin, Building, Calendar, ArrowRight, Terminal, Sparkles, CheckCircle2, Copy, Check, Code2, Briefcase, Download, ShieldCheck, Eye, X, ZoomIn } from 'lucide-react';
+import { Github, Linkedin, MapPin, Building, Calendar, ArrowRight, Terminal, Sparkles, CheckCircle2, Copy, Check, Code2, Briefcase, Download, ShieldCheck, Eye, X, ZoomIn } from 'lucide-react';
 import { GithubUser } from '../types/github';
 
 interface HeroProps {
@@ -7,6 +7,8 @@ interface HeroProps {
   totalReposCount: number;
   onExploreWorks: () => void;
   onContactClick: () => void;
+  audiencePersona?: 'tech-lead' | 'recruiter';
+  onPersonaChange?: (persona: 'tech-lead' | 'recruiter') => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({
@@ -14,10 +16,18 @@ export const Hero: React.FC<HeroProps> = ({
   totalReposCount,
   onExploreWorks,
   onContactClick,
+  audiencePersona,
+  onPersonaChange,
 }) => {
   const [copiedClone, setCopiedClone] = useState(false);
-  const [audiencePersona, setAudiencePersona] = useState<'tech-lead' | 'recruiter'>('tech-lead');
+  const [internalPersona, setInternalPersona] = useState<'tech-lead' | 'recruiter'>('tech-lead');
   const [isPhotoLightboxOpen, setIsPhotoLightboxOpen] = useState(false);
+
+  const activePersona = audiencePersona ?? internalPersona;
+  const setPersona = (p: 'tech-lead' | 'recruiter') => {
+    setInternalPersona(p);
+    onPersonaChange?.(p);
+  };
 
   const copyCloneCmd = () => {
     navigator.clipboard.writeText(`git clone https://github.com/${user.login}/LYRIC.git`);
@@ -38,9 +48,9 @@ export const Hero: React.FC<HeroProps> = ({
             <span className="text-xs font-mono text-slate-400">Audience View:</span>
             <div className="flex items-center p-1 rounded-lg bg-[#0f1118] border border-white/[0.08]">
               <button
-                onClick={() => setAudiencePersona('tech-lead')}
+                onClick={() => setPersona('tech-lead')}
                 className={`flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                  audiencePersona === 'tech-lead'
+                  activePersona === 'tech-lead'
                     ? 'bg-indigo-600 text-white shadow-sm'
                     : 'text-slate-400 hover:text-white'
                 }`}
@@ -49,9 +59,9 @@ export const Hero: React.FC<HeroProps> = ({
                 <span>Tech Lead View</span>
               </button>
               <button
-                onClick={() => setAudiencePersona('recruiter')}
+                onClick={() => setPersona('recruiter')}
                 className={`flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                  audiencePersona === 'recruiter'
+                  activePersona === 'recruiter'
                     ? 'bg-indigo-600 text-white shadow-sm'
                     : 'text-slate-400 hover:text-white'
                 }`}
@@ -96,7 +106,7 @@ export const Hero: React.FC<HeroProps> = ({
                 Christian Amos Otieno
               </h1>
               
-              {audiencePersona === 'tech-lead' ? (
+              {activePersona === 'tech-lead' ? (
                 <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl font-normal">
                   Systems-focused software engineer specializing in low-overhead network protocols in{' '}
                   <span className="text-white font-semibold">Go</span>, high-throughput spatial indexing in{' '}
@@ -112,10 +122,10 @@ export const Hero: React.FC<HeroProps> = ({
             </div>
 
             {/* Action buttons */}
-            <div className="pt-2 flex flex-wrap items-center gap-4">
+            <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 onClick={onExploreWorks}
-                className="px-6 py-3 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-all shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30 flex items-center gap-2 group"
+                className="px-6 py-3 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-all shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30 flex items-center gap-2 group cursor-pointer"
               >
                 <span>Explore Featured Systems</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -123,10 +133,21 @@ export const Hero: React.FC<HeroProps> = ({
 
               <button
                 onClick={onContactClick}
-                className="px-5 py-3 text-sm font-semibold text-slate-200 bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] hover:border-white/[0.2] rounded-lg transition-colors"
+                className="px-5 py-3 text-sm font-semibold text-slate-200 bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.1] hover:border-white/[0.2] rounded-lg transition-colors cursor-pointer"
               >
                 Get in Touch
               </button>
+
+              <a
+                href="https://www.linkedin.com/in/christian-otieno-9a9806229/"
+                target="_blank"
+                rel="noreferrer"
+                className="px-4 py-3 text-sm font-medium text-slate-300 hover:text-white bg-white/[0.04] hover:bg-[#0a66c2]/20 border border-white/[0.1] hover:border-[#0a66c2]/40 rounded-lg transition-colors flex items-center gap-2"
+                title="Connect with Christian on LinkedIn"
+              >
+                <Linkedin className="w-4 h-4 text-[#0a66c2]" />
+                <span>LinkedIn</span>
+              </a>
 
               <a
                 href="/resume.pdf"
@@ -274,10 +295,27 @@ export const Hero: React.FC<HeroProps> = ({
 
                 {/* Status footer */}
                 <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-xs text-slate-400 font-mono">
-                  <span className="flex items-center gap-1.5 text-indigo-400 text-[11px]">
-                    <Sparkles className="w-3 h-3" />
-                    GitHub @{user.login}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <a
+                      href={user.html_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1.5 text-indigo-400 hover:text-white transition-colors text-[11px]"
+                    >
+                      <Sparkles className="w-3 h-3" />
+                      <span>@{user.login}</span>
+                    </a>
+                    <span className="text-slate-600">·</span>
+                    <a
+                      href="https://www.linkedin.com/in/christian-otieno-9a9806229/"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1 text-[#0a66c2] hover:text-sky-300 transition-colors text-[11px]"
+                    >
+                      <Linkedin className="w-3 h-3" />
+                      <span>LinkedIn</span>
+                    </a>
+                  </div>
                   <span className="text-slate-500 text-[11px]">
                     {totalReposCount || 44} Public Repos
                   </span>

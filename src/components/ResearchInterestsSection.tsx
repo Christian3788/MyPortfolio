@@ -19,7 +19,7 @@ export const ResearchInterestsSection: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="text-xs font-semibold tracking-wider text-indigo-400 uppercase font-mono mb-2">
-              07. Computational Inquiries & Scientific Roots
+              09. Computational Inquiries & Scientific Roots
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-display">
               Applied Mathematics & Complex Systems

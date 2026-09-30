@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Github, RefreshCw, FileText, Menu, X, ArrowUpRight, Search, Terminal, Volume2, VolumeX } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Github, Linkedin, RefreshCw, FileText, Menu, X, ArrowUpRight, Search, Terminal, Volume2, VolumeX, ChevronDown } from 'lucide-react';
 import { GithubUser } from '../types/github';
 import { soundService } from '../services/sound';
 
@@ -21,7 +21,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   isSyncing,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(soundService.isEnabled());
+  const moreRef = useRef<HTMLDivElement>(null);
+
+  // Close 'More' dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setMoreMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const toggleSound = () => {
     const next = !soundEnabled;
@@ -42,7 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {user.name || user.login}
         </a>
 
-        {/* Zone 2: 4–6 clean text navigation links */}
+        {/* Zone 2: 5 clean core links + quiet More dropdown (No awkward wrapping on 1024-1280px) */}
         <nav className="hidden lg:flex items-center gap-6 text-sm font-medium text-slate-300">
           <a href="#featured" className="hover:text-white transition-colors">
             Featured
@@ -50,30 +63,83 @@ export const Navbar: React.FC<NavbarProps> = ({
           <a href="#systems-lab" className="hover:text-white transition-colors text-indigo-300">
             Systems Lab
           </a>
-          <a href="#repositories" className="hover:text-white transition-colors">
-            Repositories
-          </a>
-          <a href="#experience" className="hover:text-white transition-colors">
-            Experience
-          </a>
           <a href="#peer-defense" className="hover:text-white transition-colors text-emerald-400">
             Peer Defense
           </a>
-          <a href="#articles" className="hover:text-white transition-colors">
-            Articles
-          </a>
-          <a href="#engineering-stream" className="hover:text-white transition-colors text-indigo-300">
-            Stream
-          </a>
-          <a href="#interactive-globe" className="hover:text-white transition-colors text-emerald-400">
+          <a href="#interactive-globe" className="hover:text-white transition-colors text-sky-400">
             3D Globe
-          </a>
-          <a href="#research" className="hover:text-white transition-colors">
-            Research
           </a>
           <a href="#contact" className="hover:text-white transition-colors">
             Contact
           </a>
+
+          {/* More Sections Dropdown */}
+          <div className="relative" ref={moreRef}>
+            <button
+              onClick={() => {
+                soundService.playClick(200, 0.015);
+                setMoreMenuOpen((prev) => !prev);
+              }}
+              className="flex items-center gap-1 hover:text-white transition-colors text-slate-400 cursor-pointer"
+            >
+              <span>More</span>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${moreMenuOpen ? 'rotate-180 text-white' : ''}`} />
+            </button>
+
+            {moreMenuOpen && (
+              <div className="absolute top-full left-0 mt-2 w-48 py-2 rounded-xl bg-[#090b14]/95 backdrop-blur-xl border border-white/[0.12] shadow-2xl z-50 text-xs font-mono space-y-1 animate-in fade-in zoom-in-95 duration-150">
+                <a
+                  href="#repositories"
+                  onClick={() => setMoreMenuOpen(false)}
+                  className="block px-3.5 py-2 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+                >
+                  Repositories (44)
+                </a>
+                <a
+                  href="#activity"
+                  onClick={() => setMoreMenuOpen(false)}
+                  className="block px-3.5 py-2 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+                >
+                  Activity Telemetry
+                </a>
+                <a
+                  href="#experience"
+                  onClick={() => setMoreMenuOpen(false)}
+                  className="block px-3.5 py-2 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+                >
+                  Experience Milestones
+                </a>
+                <a
+                  href="#skills"
+                  onClick={() => setMoreMenuOpen(false)}
+                  className="block px-3.5 py-2 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+                >
+                  Technical Competencies
+                </a>
+                <a
+                  href="#articles"
+                  onClick={() => setMoreMenuOpen(false)}
+                  className="block px-3.5 py-2 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+                >
+                  Articles & Publications
+                </a>
+                <a
+                  href="#research"
+                  onClick={() => setMoreMenuOpen(false)}
+                  className="block px-3.5 py-2 text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+                >
+                  Astrophysics Research
+                </a>
+                <a
+                  href="#engineering-stream"
+                  onClick={() => setMoreMenuOpen(false)}
+                  className="block px-3.5 py-2 text-indigo-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+                >
+                  Continuous Logs Stream
+                </a>
+              </div>
+            )}
+          </div>
         </nav>
 
         {/* Zone 3: 1–2 primary actions + quick controls */}
@@ -112,6 +178,17 @@ export const Navbar: React.FC<NavbarProps> = ({
               <VolumeX className="w-4 h-4 text-slate-500" />
             )}
           </button>
+
+          {/* LinkedIn Profile */}
+          <a
+            href="https://www.linkedin.com/in/christian-otieno-9a9806229/"
+            target="_blank"
+            rel="noreferrer"
+            title="LinkedIn Profile: Christian Otieno"
+            className="p-1.5 text-slate-400 hover:text-[#0a66c2] bg-white/[0.04] hover:bg-[#0a66c2]/10 border border-white/[0.08] hover:border-[#0a66c2]/40 rounded-md transition-colors"
+          >
+            <Linkedin className="w-4 h-4 text-[#0a66c2]" />
+          </a>
 
           {/* GitHub Sync Button */}
           <button
@@ -232,6 +309,15 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <span>GitHub</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/christian-otieno-9a9806229/"
+              target="_blank"
+              rel="noreferrer"
+              className="px-3 py-2 text-xs text-[#0a66c2] bg-white/[0.04] border border-[#0a66c2]/30 rounded-md flex items-center gap-1"
+            >
+              <Linkedin className="w-3.5 h-3.5" />
+              <span>LinkedIn</span>
             </a>
           </div>
         </div>

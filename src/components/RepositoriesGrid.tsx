@@ -76,7 +76,7 @@ export const RepositoriesGrid: React.FC<RepositoriesGridProps> = ({
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
             <div className="text-xs font-semibold tracking-wider text-indigo-400 uppercase font-mono mb-2">
-              02. Source Code Repositories
+              03. Source Code Repositories
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-display">
               GitHub Repositories

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Printer, Download, Mail, MapPin, Github, Building, FileText } from 'lucide-react';
+import { X, Printer, Download, Mail, MapPin, Github, Linkedin, Building, FileText } from 'lucide-react';
 import { GithubUser, ExperienceItem, FeaturedProject } from '../types/github';
 
 interface ResumeModalProps {
@@ -30,6 +30,7 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
       location: user.location || 'Kisumu, Kenya',
       email: user.email || 'christianamos67@gmail.com',
       github: user.html_url,
+      linkedin: 'https://www.linkedin.com/in/christian-otieno-9a9806229/',
       experience,
       education: [
         'B.Sc. in Microbiology and Biotechnology – Aga Khan University (2019 - 2022)',
@@ -139,6 +140,16 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
                 <Github className="w-3.5 h-3.5" />
                 github.com/{user.login}
               </span>
+              <span>·</span>
+              <a
+                href="https://www.linkedin.com/in/christian-otieno-9a9806229/"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1 hover:text-white print:text-black transition-colors"
+              >
+                <Linkedin className="w-3.5 h-3.5 text-[#0a66c2]" />
+                linkedin.com/in/christian-otieno-9a9806229
+              </a>
               <span>·</span>
               <span className="flex items-center gap-1">
                 <Building className="w-3.5 h-3.5" />

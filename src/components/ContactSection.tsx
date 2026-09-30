@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Github, Send, Check, MapPin, Building, Calendar, ArrowUpRight, Clock, Globe, Sparkles, CheckCircle2, Bell, Newspaper, ShieldCheck, Loader2 } from 'lucide-react';
+import { Mail, Github, Linkedin, Send, Check, MapPin, Building, Calendar, ArrowUpRight, Clock, Globe, Sparkles, CheckCircle2, Bell, Newspaper, ShieldCheck, Loader2 } from 'lucide-react';
 import { GithubUser } from '../types/github';
 import { soundService } from '../services/sound';
 
@@ -184,7 +184,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ user }) => {
           <div className="lg:col-span-5 space-y-6">
             <div>
               <div className="text-xs font-semibold tracking-wider text-indigo-400 uppercase font-mono mb-2">
-                08. Collaboration &amp; Advisory
+                12. Collaboration &amp; Advisory
               </div>
               <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-display text-balance">
                 Let's discuss high-impact software challenges.
@@ -333,6 +333,25 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ user }) => {
                   <div className="text-xs text-slate-400">GitHub Profile</div>
                   <div className="text-sm font-semibold text-white font-mono">
                     github.com/{user.login}
+                  </div>
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors" />
+              </a>
+
+              {/* LinkedIn Card */}
+              <a
+                href="https://www.linkedin.com/in/christian-otieno-9a9806229/"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 p-3.5 rounded-xl bg-[#0f1118] border border-white/[0.08] hover:border-[#0a66c2]/60 hover:bg-[#0a66c2]/5 transition-colors group"
+              >
+                <div className="p-2 rounded-lg bg-[#0a66c2]/10 text-[#0a66c2] group-hover:bg-[#0a66c2] group-hover:text-white transition-colors">
+                  <Linkedin className="w-4 h-4" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-xs text-slate-400">LinkedIn Profile</div>
+                  <div className="text-sm font-semibold text-white font-mono">
+                    christian-otieno-9a9806229
                   </div>
                 </div>
                 <ArrowUpRight className="w-4 h-4 text-slate-500 group-hover:text-white transition-colors" />

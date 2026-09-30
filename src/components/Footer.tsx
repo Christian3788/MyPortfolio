@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Mail, ArrowUp } from 'lucide-react';
+import { Github, Mail, Linkedin, ArrowUp } from 'lucide-react';
 import { GithubUser } from '../types/github';
 
 interface FooterProps {
@@ -39,6 +39,15 @@ export const Footer: React.FC<FooterProps> = ({ user }) => {
             <span>GitHub</span>
           </a>
           <a
+            href="https://www.linkedin.com/in/christian-otieno-9a9806229/"
+            target="_blank"
+            rel="noreferrer"
+            className="hover:text-[#0a66c2] transition-colors flex items-center gap-1.5"
+          >
+            <Linkedin className="w-3.5 h-3.5 text-[#0a66c2]" />
+            <span>LinkedIn</span>
+          </a>
+          <a
             href={`mailto:${user.email || 'christianamos67@gmail.com'}`}
             className="hover:text-white transition-colors flex items-center gap-1.5"
           >
@@ -47,7 +56,7 @@ export const Footer: React.FC<FooterProps> = ({ user }) => {
           </a>
           <button
             onClick={scrollToTop}
-            className="hover:text-white transition-colors flex items-center gap-1.5 text-slate-400"
+            className="hover:text-white transition-colors flex items-center gap-1.5 text-slate-400 cursor-pointer"
           >
             <ArrowUp className="w-3.5 h-3.5" />
             <span>Top</span>

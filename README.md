@@ -55,15 +55,6 @@ A high-performance, interactive portfolio and systems engineering showcase for *
 - **Accretion Disk Simulation**: Particle-based Keplerian velocity orbital mechanics around the event horizon.
 
 ### 7. Interactive 3D Planetary Globe & Global Network Telemetry Hub (`#interactive-globe`)
-- **GitHub Commit Metropolis (Hierarchical Zoom Level-of-Detail)**:
-  - **Orbital Perspective (`altitude > 1.35`)**: Displays 4 glowing Repository Capital Metropolises (**LYRIC**, **Spatial-Agritech**, **KijijiShare**, and **Vector-Vanguard / Zone01 Core**) with total commit metrics and inter-metropolis branch fiber routes.
-  - **Zoom LOD City View (`altitude <= 1.35`)**: As the visitor zooms in, the city illuminates into a dense glowing 3D skyline of 31+ individual Git commits rendered as vertical cyber-spires protruding perpendicular to the terrain.
-  - **Commit Spire Visual Encoding**:
-    - Spire Altitude/Height proportionate to commit insertions and architectural impact (`0.05` to `0.30`).
-    - Glowing neon color-coding: 🟢 `perf:` Go runtime & memory reduction, 🔵 `feat:` PostGIS & RFC range streaming, 🟣 `arch:` Transactional advisory locks & worker pools, 🟡 `audit:` Zone01 peer defense approvals, 🔴 `fix:` Concurrency race & leak fixes.
-    - Pulsing radar beacons atop `HEAD` deployment commits.
-  - **"Dusk-to-Dawn" Commit Evolution Replay**: Interactive timeline scrubber with Play/Pause and speed toggles (1x/2x) igniting commits sequentially like city lights illuminating at night across Kisumu.
-  - **Holographic Commit Inspector**: Clicking any commit spire smoothly glides the camera into the tower, displaying commit SHA, copy button, branch, direct GitHub link, architectural notes, and a Go/SQL code diff preview.
 - **HTML5 Real Location Detection**: Requests GPS coordinates on mount via `navigator.geolocation.getCurrentPosition`. Displays non-intrusive status toast with graceful fallback to IP-based lookup (`ipapi.co`) when permission is disabled.
 - **OpenStreetMap Nominatim Reverse Geocoding**: Automatically decodes latitude/longitude into physical place names (City, County, State, Country, Flag emoji, and local timezone).
 - **Global Edge Datacenter Latency Probes**: Interactive telemetry probing 10 worldwide edge PoPs (Nairobi, Johannesburg, Frankfurt, London, Virginia, Silicon Valley, São Paulo, Singapore, Tokyo, Sydney) measuring packet flight time, jitter, and lowest-latency route selection.

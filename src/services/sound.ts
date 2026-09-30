@@ -11,6 +11,18 @@ class SoundService {
     } catch {
       this.enabled = false;
     }
+
+    if (typeof window !== 'undefined') {
+      const unlockAudio = () => {
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+        window.removeEventListener('pointerdown', unlockAudio);
+        window.removeEventListener('keydown', unlockAudio);
+      };
+      window.addEventListener('pointerdown', unlockAudio, { passive: true });
+      window.addEventListener('keydown', unlockAudio, { passive: true });
+    }
   }
 
   public isEnabled(): boolean {
@@ -22,6 +34,12 @@ class SoundService {
     try {
       localStorage.setItem('sound_haptics_enabled', val ? 'true' : 'false');
     } catch {}
+    if (val) this.initCtx();
+  }
+
+  public getContext(): AudioContext | null {
+    this.initCtx();
+    return this.ctx;
   }
 
   private initCtx() {

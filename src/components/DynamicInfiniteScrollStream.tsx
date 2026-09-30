@@ -170,7 +170,7 @@ export const DynamicInfiniteScrollStream: React.FC = () => {
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold tracking-wider text-indigo-400 uppercase font-mono mb-2">
               <Sparkles className="w-4 h-4 text-indigo-400" />
-              <span>08. Dynamic Infinite Scroll · Continuous Engineering Logs</span>
+              <span>10. Continuous Engineering Logs · Technical Stream</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-display">
               Systems Dispatches &amp; Technical Stream
