@@ -26,6 +26,67 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ history 
           </p>
         </div>
 
+        {/* Systems Engineering Philosophy & Apprenticeship Showcase */}
+        <div className="mb-12 rounded-2xl bg-[#0b0f19] border border-slate-800 text-white p-6 sm:p-8 relative overflow-hidden shadow-xl">
+          {/* Subtle blue background glow */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-center relative z-10">
+            {/* Left: Studio Monochrome Portrait */}
+            <div className="md:col-span-4 lg:col-span-3 flex justify-center md:justify-start">
+              <div className="relative aspect-square w-44 sm:w-48 rounded-2xl overflow-hidden bg-slate-950 border-2 border-slate-700 shadow-2xl group">
+                <img
+                  src="/christian_profile_studio.jpg"
+                  alt="Christian Amos Otieno · Systems Engineering Focus"
+                  className="w-full h-full object-cover object-[50%_25%] contrast-[1.15] group-hover:scale-105 transition-transform duration-500"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/IMG_20260926_072914.jpg';
+                    (e.target as HTMLImageElement).classList.add('grayscale', 'contrast-125');
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-2 left-2 right-2 text-center text-[10px] font-mono text-slate-300 font-bold bg-slate-900/80 backdrop-blur-xs py-1 px-2 rounded-md border border-slate-700">
+                  Late-Night Systems Rigor
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Engineering Philosophy & Apprenticeship Rigor Quote */}
+            <div className="md:col-span-8 lg:col-span-9 space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#38bdf8] bg-sky-950/60 px-2.5 py-0.5 rounded border border-sky-800">
+                  Engineering Philosophy &amp; Invariants
+                </span>
+                <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/60 px-2.5 py-0.5 rounded border border-emerald-800 font-bold">
+                  ● 100% Peer Review Sign-Off
+                </span>
+              </div>
+
+              <blockquote className="text-base sm:text-lg text-slate-100 font-display leading-relaxed italic border-l-2 border-[#0059e8] pl-4">
+                "At Zone01 Kisumu, code is never committed in isolation. True systems mastery is forged under adversarial peer defense, deterministic memory bounds, and verifiable mathematical correctness."
+              </blockquote>
+
+              <div className="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-slate-800 text-xs font-mono text-slate-300">
+                <div>
+                  <span className="text-white font-bold block text-sm">Christian Amos Otieno</span>
+                  <span className="text-slate-400">Systems-Focused Software Developer · Zone01 Kisumu</span>
+                </div>
+
+                <div className="flex items-center gap-4 text-[11px]">
+                  <div>
+                    <span className="text-slate-400 block text-[10px]">APPRENTICESHIP:</span>
+                    <span className="text-emerald-400 font-bold">Full-Stack / Systems</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-400 block text-[10px]">FOUNDATIONS:</span>
+                    <span className="text-blue-300 font-bold">B.Sc. Microbiology &amp; Biotech</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Experience Cards */}
         <div className="space-y-8">
           {history.map((item, idx) => (

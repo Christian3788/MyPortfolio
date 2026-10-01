@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Mail, Github, Linkedin, Send, Check, MapPin, Building, Calendar, ArrowUpRight, Clock, Globe, Sparkles, CheckCircle2, Bell, Newspaper, ShieldCheck, Loader2 } from 'lucide-react';
 import { GithubUser } from '../types/github';
 import { soundService } from '../services/sound';
+import { ContactQrCodeWidget } from './ContactQrCodeWidget';
 
 interface ContactSectionProps {
   user: GithubUser;
@@ -198,28 +199,54 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ user }) => {
 
             {/* Direct Connect Information */}
             <div className="space-y-3.5 pt-2 border-t border-slate-200/80">
-              {/* Personal Engineer Snapshot Card with Photo */}
-              <div className="flex items-center gap-3.5 p-3.5 rounded-xl bg-white border border-slate-200/90 shadow-xs">
-                <div className="relative w-14 h-16 rounded-lg overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
-                  <img
-                    src="/IMG_20260926_072914.jpg"
-                    alt={user.name || 'Christian Amos Otieno'}
-                    className="w-full h-full object-cover object-[50%_15%]"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = '/profile.jpg';
-                    }}
-                  />
+              {/* Personal Engineer Snapshot Card with Studio Silhouette & Daylight Switch */}
+              <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-[0_4px_20px_-4px_rgba(0,89,232,0.06)] space-y-3.5">
+                <div className="flex items-center gap-3.5">
+                  <div className="relative w-16 h-20 rounded-xl overflow-hidden bg-slate-950 border-2 border-slate-800 shadow-md shrink-0 group">
+                    <img
+                      src="/christian_profile_studio.jpg"
+                      alt={user.name || 'Christian Amos Otieno'}
+                      className="w-full h-full object-cover object-[50%_25%] contrast-[1.12] group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/IMG_20260926_072914.jpg';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+                    <span className="absolute bottom-1 left-1 right-1 text-center text-[8px] font-mono text-slate-300 font-bold bg-slate-900/90 rounded px-1">
+                      STUDIO
+                    </span>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-slate-900 font-display">
+                        {user.name || 'Christian Amos Otieno'}
+                      </span>
+                      <span className="text-[10px] font-mono text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300 font-bold">
+                        AVAILABLE
+                      </span>
+                    </div>
+                    <div className="text-xs text-[#0059e8] font-mono font-semibold">
+                      Senior Systems &amp; Backend Engineer
+                    </div>
+                    <p className="text-[11px] text-slate-700 font-sans leading-snug">
+                      Zone01 Kisumu Peer-Defended · B.Sc. Aga Khan Univ
+                    </p>
+                    <div className="flex items-center gap-1.5 text-[11px] text-slate-800 font-medium pt-0.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>Direct response within 24h · EAT (UTC+3)</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <div className="text-sm font-semibold text-slate-900">
-                    {user.name || 'Christian Amos Otieno'}
-                  </div>
-                  <div className="text-xs text-[#0059e8] font-mono font-medium">
-                    Peer-Defended Systems Engineer
-                  </div>
-                  <div className="text-[11px] text-slate-700 font-medium">
-                    Typically responds within 24 hours · EAT (UTC+3)
-                  </div>
+
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-700">
+                  <span>Remote Friendly (UTC-5 to UTC+4)</span>
+                  <a
+                    href="mailto:christianamos67@gmail.com"
+                    className="text-[#0059e8] font-bold hover:underline"
+                  >
+                    christianamos67@gmail.com →
+                  </a>
                 </div>
               </div>
 
@@ -316,6 +343,9 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ user }) => {
                   </div>
                 </div>
               </div>
+
+              {/* Dynamic QR Code Generator: Scan to Save Contact or Open Portfolio */}
+              <ContactQrCodeWidget user={user} />
 
               {/* Direct Email Card */}
               <a
