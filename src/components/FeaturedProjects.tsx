@@ -3,6 +3,7 @@ import { ArrowUpRight, Code2, Database, Activity, Sparkles, Terminal, Flame, Lay
 import { FeaturedProject } from '../types/github';
 import { AudioVisualizerWidget } from './AudioVisualizerWidget';
 import { GisSimulatorWidget } from './GisSimulatorWidget';
+import { InlineArchitectureSandbox } from './InlineArchitectureSandbox';
 
 interface FeaturedProjectsProps {
   projects: FeaturedProject[];
@@ -325,6 +326,14 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
             </div>
           ))}
 
+        </div>
+
+        {/* Live Inline Architecture & Chaos Workbench */}
+        <div id="architecture-sandbox" className="mt-12 scroll-mt-24">
+          <InlineArchitectureSandbox
+            featuredProjects={projects}
+            onOpenTopologyModal={onOpenTopology}
+          />
         </div>
 
       </div>

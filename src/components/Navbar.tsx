@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Github, Linkedin, RefreshCw, FileText, Menu, X, ArrowUpRight, Search, Terminal, Volume2, VolumeX, ChevronDown, Trophy, Sparkles } from 'lucide-react';
 import { GithubUser } from '../types/github';
 import { soundService, SoundProfile } from '../services/sound';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface NavbarProps {
   user: GithubUser;
@@ -227,7 +228,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Sound Profile Switcher Toggle */}
           <button
             onClick={cycleSoundProfile}
-            className={`flex items-center gap-1 px-2 py-1.5 text-xs font-mono rounded-md border transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-2 py-1.5 text-xs font-mono rounded-md border transition-all cursor-pointer ${
               soundEnabled
                 ? 'bg-blue-50 border-blue-200 text-[#0059e8] font-bold shadow-2xs'
                 : 'bg-slate-100/90 hover:bg-slate-200 border-slate-200 text-slate-600'
@@ -235,7 +236,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             title={`Audio FX: ${soundEnabled ? soundProfile.toUpperCase() : 'MUTED'} (Click to cycle Cherry MX -> Subsea Sonar -> Topre -> Mute)`}
           >
             {soundEnabled ? (
-              <Volume2 className="w-3.5 h-3.5 text-[#0059e8]" />
+              <div className="flex items-center gap-1">
+                <Volume2 className="w-3.5 h-3.5 text-[#0059e8]" />
+                <span className="flex items-end gap-0.5 h-2.5" aria-hidden="true">
+                  <span className="w-0.5 h-2 bg-[#0059e8] rounded-full animate-pulse" />
+                  <span className="w-0.5 h-3 bg-[#0059e8] rounded-full animate-pulse delay-75" />
+                  <span className="w-0.5 h-1.5 bg-[#0059e8] rounded-full animate-pulse delay-150" />
+                </span>
+              </div>
             ) : (
               <VolumeX className="w-3.5 h-3.5 text-slate-500" />
             )}
@@ -243,6 +251,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               {soundEnabled ? soundProfile : 'Mute'}
             </span>
           </button>
+
+          {/* Standalone PWA Install Trigger */}
+          <PWAInstallButton variant="navbar" />
 
           {/* LinkedIn Profile */}
           <a

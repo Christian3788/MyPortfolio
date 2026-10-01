@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ShieldCheck, GitPullRequest, CheckCircle2, MessageSquare, ArrowRight, Code, Terminal, Check, Copy, Split, AlignLeft, Sparkles, Trophy } from 'lucide-react';
 import { soundService } from '../services/sound';
+import { PeerDefenseMicroChallenge } from './PeerDefenseMicroChallenge';
 
 interface PeerCodeDefenseSectionProps {
   onOpenChallenge?: () => void;
@@ -381,6 +382,11 @@ export const PeerCodeDefenseSection: React.FC<PeerCodeDefenseSectionProps> = ({
 
           </div>
 
+        </div>
+
+        {/* Rapid Peer Review Interactive Micro-Audit */}
+        <div className="pt-2">
+          <PeerDefenseMicroChallenge onOpenFullChallenge={onOpenChallenge} />
         </div>
 
       </div>

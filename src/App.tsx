@@ -24,6 +24,7 @@ import { CommandPalette } from './components/CommandPalette';
 import { InteractiveTerminalModal } from './components/InteractiveTerminalModal';
 import { PeerReviewChallengeModal } from './components/PeerReviewChallengeModal';
 import { ArchitectureTopologyModal } from './components/ArchitectureTopologyModal';
+import { OfflineIndicator } from './components/OfflineIndicator';
 import { githubService } from './services/github';
 import { soundService } from './services/sound';
 import {
@@ -141,6 +142,9 @@ export default function App() {
           totalReposCount={repos.length}
           onExploreWorks={handleExploreWorks}
           onContactClick={handleContactClick}
+          onOpenChallenge={() => setIsChallengeModalOpen(true)}
+          onOpenResume={() => setIsResumeModalOpen(true)}
+          onOpenTerminal={() => setIsTerminalOpen(true)}
           audiencePersona={persona}
           onPersonaChange={setPersona}
         />
@@ -274,6 +278,9 @@ export default function App() {
         isOpen={!!topologyProject}
         onClose={() => setTopologyProject(null)}
       />
+
+      {/* Offline Connectivity Status Indicator (PWA Flight Mode) */}
+      <OfflineIndicator />
 
     </div>
   );
