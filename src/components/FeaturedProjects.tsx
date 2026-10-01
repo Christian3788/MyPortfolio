@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUpRight, Code2, Database, Activity, Sparkles, Terminal } from 'lucide-react';
+import { ArrowUpRight, Code2, Database, Activity, Sparkles, Terminal, Flame, Layers } from 'lucide-react';
 import { FeaturedProject } from '../types/github';
 import { AudioVisualizerWidget } from './AudioVisualizerWidget';
 import { GisSimulatorWidget } from './GisSimulatorWidget';
@@ -7,11 +7,13 @@ import { GisSimulatorWidget } from './GisSimulatorWidget';
 interface FeaturedProjectsProps {
   projects: FeaturedProject[];
   onSelectProject: (project: FeaturedProject) => void;
+  onOpenTopology?: (project: FeaturedProject) => void;
 }
 
 export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
   projects,
   onSelectProject,
+  onOpenTopology,
 }) => {
   return (
     <section id="featured" className="py-20 border-t border-slate-200/90 bg-white">
@@ -122,7 +124,18 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
                     ))}
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    {onOpenTopology && (
+                      <button
+                        onClick={() => onOpenTopology(projects[0])}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-rose-700 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition-colors cursor-pointer shadow-2xs font-mono"
+                        title="Open interactive system topology and chaos fault simulator"
+                      >
+                        <Flame className="w-3.5 h-3.5 text-rose-600" />
+                        <span>Topology &amp; Chaos Lab</span>
+                      </button>
+                    )}
+
                     <button
                       onClick={() => onSelectProject(projects[0])}
                       className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#0059e8] hover:bg-[#0048c4] rounded-lg transition-colors shadow-xs cursor-pointer"
@@ -201,13 +214,26 @@ export const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({
                     ))}
                   </div>
 
-                  <button
-                    onClick={() => onSelectProject(projects[1])}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#0059e8] hover:bg-[#0048c4] rounded-lg transition-colors shadow-xs cursor-pointer"
-                  >
-                    <span>View PostGIS Query Plan</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </button>
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    {onOpenTopology && (
+                      <button
+                        onClick={() => onOpenTopology(projects[1])}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-rose-700 hover:text-rose-900 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition-colors cursor-pointer shadow-2xs font-mono"
+                        title="Open interactive spatial system topology and chaos fault simulator"
+                      >
+                        <Flame className="w-3.5 h-3.5 text-rose-600" />
+                        <span>Topology &amp; Chaos Lab</span>
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => onSelectProject(projects[1])}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#0059e8] hover:bg-[#0048c4] rounded-lg transition-colors shadow-xs cursor-pointer"
+                    >
+                      <span>View PostGIS Query Plan</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
 
               </div>

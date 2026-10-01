@@ -1,6 +1,7 @@
-import React from 'react';
-import { X, Printer, Download, Mail, MapPin, Github, Linkedin, Building, FileText } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Printer, Download, Mail, MapPin, Github, Linkedin, Building, FileText, Copy, Check, Code } from 'lucide-react';
 import { GithubUser, ExperienceItem, FeaturedProject } from '../types/github';
+import { soundService } from '../services/sound';
 
 interface ResumeModalProps {
   user: GithubUser;
@@ -17,13 +18,106 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const [copiedFormat, setCopiedFormat] = useState<'md' | 'txt' | null>(null);
+
   if (!isOpen) return null;
 
   const handlePrint = () => {
+    soundService.playClick(200, 0.02);
     window.print();
   };
 
+  const generateMarkdown = () => {
+    return `# ${user.name || 'Christian Amos Otieno'}
+**Senior Systems & Full-Stack Software Engineer**
+Location: ${user.location || 'Kisumu, Kenya'} | Timezone: EAT (UTC+3)
+Email: ${user.email || 'christianamos67@gmail.com'}
+GitHub: ${user.html_url || 'https://github.com/christian3788'}
+LinkedIn: https://www.linkedin.com/in/christian-otieno-9a9806229/
+
+---
+
+## Professional Summary
+Systems-focused software engineer specializing in low-overhead network protocols in Go, high-throughput spatial indexing in PostGIS, and deterministic interfaces in Next.js & TypeScript. Proven record of delivering resilient cloud microservices, zero-copy streaming, and peer-defended code mastery at Zone01 Kisumu. Background in microbiology and biotechnology with computational research focus in biochemical reaction networks and relativistic physics simulations.
+
+---
+
+## Experience & Engineering Leadership
+${experience.map((exp) => `### ${exp.role} · ${exp.company}
+*${exp.location} | ${exp.period}*
+${exp.highlights.map((h) => `- ${h}`).join('\n')}
+**Core Toolchain:** ${exp.technologies.join(', ')}
+`).join('\n')}
+
+---
+
+## Flagship Systems Architecture
+${featuredProjects.map((p) => `### ${p.title} (${p.category})
+- **Problem:** ${p.problem}
+- **Solution:** ${p.solution}
+- **Tech Stack:** ${p.techStack.join(', ')}
+- **Repository:** ${p.githubUrl}
+`).join('\n')}
+
+---
+
+## Education & Scientific Training
+- **B.Sc. in Microbiology and Biotechnology** — Aga Khan University (2019 – 2022)
+  *Research:* Reaction-diffusion kinetics, enzyme active-site spatial modeling, stochastic simulation.
+- **Apprentice Full-Stack Developer** — Zone01 Kisumu (2024 – Present)
+  *Focus:* Systems programming in Go, PostgreSQL/PostGIS, concurrency, live peer code defense.
+- **Neuro-Analytics & Brain-Data Integration** — Skills for Africa (2023 – 2024)
+`;
+  };
+
+  const generatePlainText = () => {
+    return `================================================================================
+${(user.name || 'Christian Amos Otieno').toUpperCase()}
+Systems-Focused Software Engineer
+Location: ${user.location || 'Kisumu, Kenya'} | Email: ${user.email || 'christianamos67@gmail.com'}
+GitHub: ${user.html_url || 'https://github.com/christian3788'} | LinkedIn: https://www.linkedin.com/in/christian-otieno-9a9806229/
+================================================================================
+
+PROFESSIONAL SUMMARY
+Systems-focused software engineer specializing in low-overhead network protocols in Go,
+high-throughput spatial indexing in PostGIS, and deterministic interfaces in Next.js & TypeScript.
+Peer-defended mastery at Zone01 Kisumu. Background in biotechnology & computational physics.
+
+WORK EXPERIENCE
+${experience.map((exp) => `--------------------------------------------------------------------------------
+${exp.role.toUpperCase()} — ${exp.company}
+${exp.location} | ${exp.period}
+${exp.highlights.map((h) => `* ${h}`).join('\n')}
+Toolchain: ${exp.technologies.join(', ')}
+`).join('\n')}
+
+FLAGSHIP SYSTEMS
+${featuredProjects.map((p) => `--------------------------------------------------------------------------------
+${p.title.toUpperCase()} [${p.category}]
+* Problem:  ${p.problem}
+* Solution: ${p.solution}
+* Stack:    ${p.techStack.join(', ')}
+* Source:   ${p.githubUrl}
+`).join('\n')}
+
+EDUCATION & CREDENTIALS
+* B.Sc. in Microbiology and Biotechnology — Aga Khan University (2019 - 2022)
+* Apprentice Full-Stack Developer — Zone01 Kisumu (2024 - Present)
+* Neuro-Analytics & Brain-Data Integration — Skills for Africa (2023 - 2024)
+================================================================================
+`;
+  };
+
+  const handleCopy = (format: 'md' | 'txt') => {
+    const text = format === 'md' ? generateMarkdown() : generatePlainText();
+    navigator.clipboard.writeText(text);
+    setCopiedFormat(format);
+    soundService.playSuccess();
+    setTimeout(() => setCopiedFormat(null), 2500);
+  };
+
   const handleDownloadJSON = () => {
+    soundService.playClick(240, 0.02);
     const resumeData = {
       name: user.name || 'Christian Amos Otieno',
       title: 'Systems-Focused Software Engineer',
@@ -67,7 +161,33 @@ export const ResumeModal: React.FC<ResumeModalProps> = ({
             Curriculum Vitae · Christian Amos Otieno
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => handleCopy('md')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-all cursor-pointer shadow-xs ${
+                copiedFormat === 'md'
+                  ? 'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold'
+                  : 'text-slate-700 bg-white hover:bg-slate-50 border-slate-200'
+              }`}
+              title="Copy ATS-friendly Markdown version"
+            >
+              {copiedFormat === 'md' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Code className="w-3.5 h-3.5 text-[#0059e8]" />}
+              <span>{copiedFormat === 'md' ? 'Markdown Copied!' : 'Copy Markdown'}</span>
+            </button>
+
+            <button
+              onClick={() => handleCopy('txt')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-all cursor-pointer shadow-xs ${
+                copiedFormat === 'txt'
+                  ? 'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold'
+                  : 'text-slate-700 bg-white hover:bg-slate-50 border-slate-200'
+              }`}
+              title="Copy clean plaintext version"
+            >
+              {copiedFormat === 'txt' ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5 text-slate-500" />}
+              <span>{copiedFormat === 'txt' ? 'Plain Text Copied!' : 'Copy Plain Text'}</span>
+            </button>
+
             <a
               href="/resume.pdf"
               download="Christian_Amos_Otieno_Resume.pdf"

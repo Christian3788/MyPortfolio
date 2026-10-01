@@ -1,13 +1,20 @@
 // Subtle Web Audio API sound synthesizer for interactive developer feedback
 
+export type SoundProfile = 'cherry' | 'sonar' | 'topre';
+
 class SoundService {
   private ctx: AudioContext | null = null;
   private enabled: boolean = false;
+  private profile: SoundProfile = 'cherry';
 
   constructor() {
     try {
       const saved = localStorage.getItem('sound_haptics_enabled');
       this.enabled = saved === 'true';
+      const savedProfile = localStorage.getItem('sound_profile') as SoundProfile;
+      if (savedProfile && ['cherry', 'sonar', 'topre'].includes(savedProfile)) {
+        this.profile = savedProfile;
+      }
     } catch {
       this.enabled = false;
     }
@@ -37,6 +44,17 @@ class SoundService {
     if (val) this.initCtx();
   }
 
+  public getProfile(): SoundProfile {
+    return this.profile;
+  }
+
+  public setProfile(p: SoundProfile) {
+    this.profile = p;
+    try {
+      localStorage.setItem('sound_profile', p);
+    } catch {}
+  }
+
   public getContext(): AudioContext | null {
     this.initCtx();
     return this.ctx;
@@ -63,16 +81,41 @@ class SoundService {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
 
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-      gain.gain.setValueAtTime(0.015, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
-
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-
-      osc.start();
-      osc.stop(this.ctx.currentTime + duration);
+      if (this.profile === 'sonar') {
+        // High harmonic ping with gentle decay
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq * 3, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.025, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration * 4);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration * 4);
+      } else if (this.profile === 'topre') {
+        // Muffled tactile thud with low-pass filter
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(350, this.ctx.currentTime);
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq * 0.7, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.03, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration * 1.5);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration * 1.5);
+      } else {
+        // Default 'cherry': Crisp mechanical switch click
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.018, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+      }
     } catch {}
   }
 

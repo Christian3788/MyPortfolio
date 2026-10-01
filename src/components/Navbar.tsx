@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Github, Linkedin, RefreshCw, FileText, Menu, X, ArrowUpRight, Search, Terminal, Volume2, VolumeX, ChevronDown } from 'lucide-react';
+import { Github, Linkedin, RefreshCw, FileText, Menu, X, ArrowUpRight, Search, Terminal, Volume2, VolumeX, ChevronDown, Trophy, Sparkles } from 'lucide-react';
 import { GithubUser } from '../types/github';
-import { soundService } from '../services/sound';
+import { soundService, SoundProfile } from '../services/sound';
 
 interface NavbarProps {
   user: GithubUser;
@@ -9,6 +9,7 @@ interface NavbarProps {
   onOpenResumeModal: () => void;
   onOpenCommandPalette: () => void;
   onOpenTerminal: () => void;
+  onOpenChallenge?: () => void;
   isSyncing: boolean;
 }
 
@@ -18,11 +19,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenResumeModal,
   onOpenCommandPalette,
   onOpenTerminal,
+  onOpenChallenge,
   isSyncing,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(soundService.isEnabled());
+  const [soundProfile, setSoundProfile] = useState<SoundProfile>(soundService.getProfile());
   const moreRef = useRef<HTMLDivElement>(null);
 
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -50,11 +53,28 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const toggleSound = () => {
-    const next = !soundEnabled;
-    soundService.setEnabled(next);
-    setSoundEnabled(next);
-    if (next) soundService.playSuccess();
+  const cycleSoundProfile = () => {
+    if (!soundEnabled) {
+      soundService.setEnabled(true);
+      setSoundEnabled(true);
+      soundService.setProfile('cherry');
+      setSoundProfile('cherry');
+      soundService.playSuccess();
+      return;
+    }
+
+    if (soundProfile === 'cherry') {
+      soundService.setProfile('sonar');
+      setSoundProfile('sonar');
+      soundService.playClick(280, 0.04);
+    } else if (soundProfile === 'sonar') {
+      soundService.setProfile('topre');
+      setSoundProfile('topre');
+      soundService.playClick(200, 0.04);
+    } else {
+      soundService.setEnabled(false);
+      setSoundEnabled(false);
+    }
   };
 
   return (
@@ -167,15 +187,30 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Zone 3: 1–2 primary actions + quick controls */}
         <div className="hidden sm:flex items-center gap-2.5">
+          {/* Peer Review Challenge Trigger */}
+          {onOpenChallenge && (
+            <button
+              onClick={() => {
+                soundService.playClick(260, 0.02);
+                onOpenChallenge();
+              }}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-md transition-colors cursor-pointer font-mono font-bold shadow-2xs"
+              title="Test systems engineering invariants in peer defense challenge"
+            >
+              <Trophy className="w-3.5 h-3.5 text-amber-600" />
+              <span className="hidden xl:inline text-[11px]">Peer Quiz</span>
+            </button>
+          )}
+
           {/* Command Palette Trigger */}
           <button
             onClick={onOpenCommandPalette}
-            className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-slate-600 hover:text-[#0059e8] bg-slate-100/90 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors cursor-pointer"
+            className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-slate-700 hover:text-[#0059e8] bg-slate-100/90 hover:bg-slate-100 border border-slate-200 rounded-md transition-colors cursor-pointer font-medium"
             title="Search or Run Commands (Cmd+K)"
           >
             <Search className="w-3.5 h-3.5 text-[#0059e8]" />
-            <span className="hidden xl:inline text-[11px] font-medium">Command Menu</span>
-            <kbd className="px-1.5 py-0.5 text-[10px] bg-white border border-slate-200 rounded text-slate-600 font-mono shadow-2xs">
+            <span className="hidden xl:inline text-[11px]">Command Menu</span>
+            <kbd className="px-1.5 py-0.5 text-[10px] bg-white border border-slate-200 rounded text-slate-700 font-mono font-medium shadow-2xs">
               ⌘K
             </kbd>
           </button>
@@ -183,23 +218,30 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Terminal Shell Button */}
           <button
             onClick={onOpenTerminal}
-            className="p-1.5 text-slate-600 hover:text-emerald-700 bg-slate-100/90 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-md transition-colors cursor-pointer"
+            className="p-1.5 text-slate-700 hover:text-emerald-700 bg-slate-100/90 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-md transition-colors cursor-pointer"
             title="Interactive CLI Terminal"
           >
             <Terminal className="w-4 h-4 text-emerald-600" />
           </button>
 
-          {/* Sound Haptics Toggle */}
+          {/* Sound Profile Switcher Toggle */}
           <button
-            onClick={toggleSound}
-            className="p-1.5 text-slate-700 hover:text-slate-900 bg-slate-100/90 hover:bg-slate-200 border border-slate-200 rounded-md transition-colors cursor-pointer"
-            title={soundEnabled ? 'Mute Mechanical Click Sound' : 'Enable Mechanical Click Sound'}
+            onClick={cycleSoundProfile}
+            className={`flex items-center gap-1 px-2 py-1.5 text-xs font-mono rounded-md border transition-all cursor-pointer ${
+              soundEnabled
+                ? 'bg-blue-50 border-blue-200 text-[#0059e8] font-bold shadow-2xs'
+                : 'bg-slate-100/90 hover:bg-slate-200 border-slate-200 text-slate-600'
+            }`}
+            title={`Audio FX: ${soundEnabled ? soundProfile.toUpperCase() : 'MUTED'} (Click to cycle Cherry MX -> Subsea Sonar -> Topre -> Mute)`}
           >
             {soundEnabled ? (
-              <Volume2 className="w-4 h-4 text-[#0059e8]" />
+              <Volume2 className="w-3.5 h-3.5 text-[#0059e8]" />
             ) : (
-              <VolumeX className="w-4 h-4 text-slate-600" />
+              <VolumeX className="w-3.5 h-3.5 text-slate-500" />
             )}
+            <span className="text-[10px] hidden md:inline uppercase">
+              {soundEnabled ? soundProfile : 'Mute'}
+            </span>
           </button>
 
           {/* LinkedIn Profile */}
@@ -285,6 +327,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               Peer Code Defense
             </a>
+            {onOpenChallenge && (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenChallenge();
+                }}
+                className="py-1.5 text-left text-amber-800 font-bold flex items-center gap-1.5 cursor-pointer"
+              >
+                <Trophy className="w-3.5 h-3.5 text-amber-600" />
+                <span>Take Peer Review Quiz</span>
+              </button>
+            )}
             <a
               href="#repositories"
               onClick={() => setMobileMenuOpen(false)}

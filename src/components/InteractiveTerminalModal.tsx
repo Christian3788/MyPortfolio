@@ -67,15 +67,18 @@ export const InteractiveTerminalModal: React.FC<InteractiveTerminalModalProps> =
           <div className="space-y-1 text-xs">
             <div className="text-indigo-400 font-bold">Available Commands:</div>
             <div><span className="text-white font-bold">whoami</span> - Inspect engineer identity and credentials</div>
-            <div><span className="text-white font-bold">projects</span> - List flagship systems & case studies</div>
-            <div><span className="text-white font-bold">skills</span> - Display architecture & language matrix</div>
-            <div><span className="text-white font-bold">defense</span> - View Zone01 peer-defended pull requests & audit proof</div>
-            <div><span className="text-white font-bold">globe</span> - Inspect 3D planetary geolocation & telemetry link to Kisumu</div>
+            <div><span className="text-white font-bold">projects</span> - List flagship systems &amp; case studies</div>
+            <div><span className="text-white font-bold">skills</span> - Display architecture &amp; language matrix</div>
+            <div><span className="text-white font-bold">defense</span> - View Zone01 peer-defended pull requests &amp; audit proof</div>
+            <div><span className="text-white font-bold">quiz</span> - Test systems knowledge in interactive Peer Review Challenge</div>
+            <div><span className="text-white font-bold">chaos</span> - Inspect fault injection and circuit breaker recovery</div>
+            <div><span className="text-white font-bold">audio [profile]</span> - Switch audio FX (cherry | sonar | topre | mute)</div>
+            <div><span className="text-white font-bold">globe</span> - Inspect 3D planetary geolocation &amp; telemetry link to Kisumu</div>
             <div><span className="text-white font-bold">bench</span> - Run live in-browser SIMD benchmark</div>
             <div><span className="text-white font-bold">stress</span> - Simulate 1,000 concurrent goroutine load</div>
             <div><span className="text-white font-bold">bloom [key]</span> - Check membership in 32-bit Bloom filter</div>
             <div><span className="text-white font-bold">cat resume.txt</span> - Display structured text resume</div>
-            <div><span className="text-white font-bold">contact</span> - Show direct email & GitHub links</div>
+            <div><span className="text-white font-bold">contact</span> - Show direct email &amp; GitHub links</div>
             <div><span className="text-white font-bold">clear</span> - Clear terminal window</div>
             <div><span className="text-white font-bold">exit</span> - Close terminal shell</div>
           </div>
@@ -197,6 +200,52 @@ PROJECTS:
           );
         } else {
           output = <div className="text-rose-400">cat: file not found: {args[0] || ''}</div>;
+        }
+        break;
+
+      case 'quiz':
+        output = (
+          <div className="space-y-1 text-xs font-mono">
+            <div className="text-amber-400 font-bold">[ZONE01 PEER REVIEW QUIZ]</div>
+            <div>Test your systems programming knowledge against 3 real Zone01 defense scenarios:</div>
+            <div>1. Go goroutine leak &amp; channel deadlock</div>
+            <div>2. PostGIS sequential scan vs. GiST R-Tree index optimization</div>
+            <div>3. Zero-allocation 64KB TCP streaming with sync.Pool</div>
+            <div className="text-indigo-300">Click &apos;Peer Quiz&apos; in the top navigation bar or press ⌘K to open the interactive test modal!</div>
+          </div>
+        );
+        break;
+
+      case 'chaos':
+        output = (
+          <div className="space-y-1 text-xs font-mono">
+            <div className="text-rose-400 font-bold">[CHAOS ENGINEERING LAB]</div>
+            <div>Circuit breaker &amp; fault injection simulator:</div>
+            <div>▸ Redis cluster crash ➔ Fallback to PostgreSQL read-replica with serialized snapshot</div>
+            <div>▸ 250ms WAN packet delay ➔ TCP sliding window auto-scaled to 32KB buffer</div>
+            <div>▸ MinIO S3 503 SlowDown ➔ Exponential backoff retry with zero packet drop</div>
+            <div className="text-indigo-300">Click &apos;Topology &amp; Chaos Lab&apos; on the Featured Systems cards to trigger live fault injections!</div>
+          </div>
+        );
+        break;
+
+      case 'audio':
+        const target = (args[0] || '').toLowerCase();
+        if (['cherry', 'sonar', 'topre'].includes(target)) {
+          soundService.setEnabled(true);
+          soundService.setProfile(target as any);
+          soundService.playSuccess();
+          output = <div className="text-emerald-400 font-mono text-xs">✓ Audio profile switched to: {target.toUpperCase()}</div>;
+        } else if (target === 'mute' || target === 'off') {
+          soundService.setEnabled(false);
+          output = <div className="text-amber-400 font-mono text-xs">✓ Audio synthesizer muted.</div>;
+        } else {
+          output = (
+            <div className="text-xs font-mono space-y-1">
+              <div>Current Audio Status: <span className="text-white font-bold">{soundService.isEnabled() ? soundService.getProfile().toUpperCase() : 'MUTED'}</span></div>
+              <div className="text-slate-400">Usage: audio [cherry | sonar | topre | mute]</div>
+            </div>
+          );
         }
         break;
 

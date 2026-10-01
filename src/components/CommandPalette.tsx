@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, X, Code2, Zap, Terminal, FileText, ArrowRight, Github, Linkedin, Mail, Volume2, VolumeX, Briefcase, Eye, Sparkles, Globe as GlobeIcon } from 'lucide-react';
+import { Search, X, Code2, Zap, Terminal, FileText, ArrowRight, Github, Linkedin, Mail, Volume2, VolumeX, Briefcase, Eye, Sparkles, Globe as GlobeIcon, Trophy, Flame } from 'lucide-react';
 import { soundService } from '../services/sound';
 
 interface CommandPaletteProps {
@@ -9,6 +9,8 @@ interface CommandPaletteProps {
   onOpenResume: () => void;
   onOpenSync: () => void;
   onSwitchPersona: (persona: 'tech-lead' | 'recruiter') => void;
+  onOpenChallenge?: () => void;
+  onOpenTopology?: () => void;
 }
 
 interface ActionItem {
@@ -27,6 +29,8 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   onOpenResume,
   onOpenSync,
   onSwitchPersona,
+  onOpenChallenge,
+  onOpenTopology,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -202,9 +206,31 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       },
     },
     {
+      id: 'action-peer-quiz',
+      category: 'Zone01 Mastery',
+      title: 'Take Peer Review Quiz (Spot Invariant Violations)',
+      subtitle: 'Interactive test on Go concurrency leaks, PostGIS GiST, and sync.Pool',
+      icon: <Trophy className="w-4 h-4 text-amber-400" />,
+      handler: () => {
+        onClose();
+        onOpenChallenge?.();
+      },
+    },
+    {
+      id: 'action-chaos-lab',
+      category: 'Systems Lab',
+      title: 'Inspect System Topology & Chaos Fault Lab',
+      subtitle: 'Live packet tracer and simulated Redis/S3 circuit breaker recovery',
+      icon: <Flame className="w-4 h-4 text-rose-400" />,
+      handler: () => {
+        onClose();
+        onOpenTopology?.();
+      },
+    },
+    {
       id: 'action-resume',
       category: 'Actions',
-      title: 'View & Download CV (PDF / JSON)',
+      title: 'View & Download CV (PDF / JSON / Markdown)',
       subtitle: 'Detailed experience, education, and skills',
       icon: <FileText className="w-4 h-4 text-indigo-400" />,
       handler: () => {

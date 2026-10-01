@@ -300,6 +300,20 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ user }) => {
                   <div className="text-[10px] text-slate-600 text-center font-mono font-medium pt-1">
                     Click any time slot above to pre-populate the direct message below
                   </div>
+
+                  {/* 15-Min Instant Calendar Link */}
+                  <div className="pt-2 border-t border-slate-100">
+                    <a
+                      href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=15-Min+Systems+Architecture+Chat+with+Christian+Amos+Otieno&details=Discussion+on+distributed+systems,+Go+streaming,+and+software+engineering+opportunities.&add=christianamos67@gmail.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-blue-50 hover:bg-blue-100 text-[#0059e8] text-xs font-mono font-bold border border-blue-200 transition-colors shadow-2xs group"
+                    >
+                      <Calendar className="w-3.5 h-3.5 text-[#0059e8]" />
+                      <span>Schedule 15-Min Chat in Google Calendar</span>
+                      <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </a>
+                  </div>
                 </div>
               </div>
 

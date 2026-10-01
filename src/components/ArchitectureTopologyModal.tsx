@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { X, Layers, Network, Database, Server, Cpu, ShieldCheck, ArrowRight, CheckCircle2, Copy, Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Layers, Network, Database, Server, Cpu, ShieldCheck, ArrowRight, CheckCircle2, Copy, Check, Flame, Activity } from 'lucide-react';
 import { FeaturedProject } from '../types/github';
+import { soundService } from '../services/sound';
 
 interface ArchitectureTopologyModalProps {
   project: FeaturedProject | null;
@@ -8,7 +9,13 @@ interface ArchitectureTopologyModalProps {
   onClose: () => void;
 }
 
-type DiagramMode = 'topology' | 'dataflow' | 'schema';
+type DiagramMode = 'topology' | 'dataflow' | 'schema' | 'chaos';
+
+interface ChaosLog {
+  timestamp: string;
+  level: 'info' | 'warn' | 'error' | 'success';
+  message: string;
+}
 
 export const ArchitectureTopologyModal: React.FC<ArchitectureTopologyModalProps> = ({
   project,
@@ -17,6 +24,91 @@ export const ArchitectureTopologyModal: React.FC<ArchitectureTopologyModalProps>
 }) => {
   const [activeMode, setActiveMode] = useState<DiagramMode>('topology');
   const [copiedContract, setCopiedContract] = useState(false);
+
+  // Chaos Lab States
+  const [redisDown, setRedisDown] = useState(false);
+  const [highLatency, setHighLatency] = useState(false);
+  const [s3Throttled, setS3Throttled] = useState(false);
+  const [packetTracing, setPacketTracing] = useState(false);
+  const [packetStep, setPacketStep] = useState<number>(0);
+  const [chaosLogs, setChaosLogs] = useState<ChaosLog[]>([
+    { timestamp: '00:00.012', level: 'info', message: 'System baseline initialized: All health checks green.' },
+    { timestamp: '00:00.084', level: 'info', message: 'Redis cluster connected: 3 nodes / sub-millisecond keyspace.' },
+    { timestamp: '00:00.120', level: 'info', message: 'PostGIS GiST R-Tree index verified: warm cache hit ratio 99.8%.' },
+  ]);
+
+  // Packet animation loop
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (packetTracing) {
+      interval = setInterval(() => {
+        setPacketStep((prev) => {
+          const next = (prev + 1) % 4;
+          if (next === 0) soundService.playClick(220, 0.02);
+          else if (next === 1) soundService.playClick(280, 0.02);
+          else if (next === 2) soundService.playClick(340, 0.02);
+          else soundService.playClick(440, 0.03);
+          return next;
+        });
+      }, highLatency ? 1200 : 600);
+    } else {
+      setPacketStep(0);
+    }
+    return () => clearInterval(interval);
+  }, [packetTracing, highLatency]);
+
+  const addChaosLog = (level: 'info' | 'warn' | 'error' | 'success', message: string) => {
+    const now = new Date();
+    const timeStr = `${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}.${String(now.getMilliseconds()).padStart(3, '0')}`;
+    setChaosLogs((prev) => [...prev.slice(-9), { timestamp: timeStr, level, message }]);
+  };
+
+  const toggleRedis = () => {
+    const next = !redisDown;
+    setRedisDown(next);
+    if (next) {
+      soundService.playAlert();
+      addChaosLog('error', 'CHAOS INJECTION: Redis primary severed connection! Simulating connection timeout.');
+      setTimeout(() => {
+        addChaosLog('warn', 'Circuit breaker tripped [RedisCachePool]. State changed to OPEN.');
+        addChaosLog('success', 'Fallback activated: Diverting queries to PostgreSQL read-replica with serialized snapshot.');
+      }, 350);
+    } else {
+      soundService.playSuccess();
+      addChaosLog('success', 'RECOVERY: Redis cluster heartbeat restored. Health check OK. Circuit closed.');
+    }
+  };
+
+  const toggleLatency = () => {
+    const next = !highLatency;
+    setHighLatency(next);
+    if (next) {
+      soundService.playAlert();
+      addChaosLog('warn', 'NETWORK CHAOS: Injected 250ms WAN packet delay across TCP stream.');
+      setTimeout(() => {
+        addChaosLog('info', 'Go TCP streaming handler adapting: Scaled sliding window down to 32KB buffer.');
+      }, 300);
+    } else {
+      soundService.playSuccess();
+      addChaosLog('success', 'NETWORK RECOVERY: WAN latency normalized (< 12ms). TCP window restored.');
+    }
+  };
+
+  const toggleS3 = () => {
+    const next = !s3Throttled;
+    setS3Throttled(next);
+    if (next) {
+      soundService.playAlert();
+      addChaosLog('error', 'STORAGE CHAOS: MinIO S3 responding with 503 SlowDown / Byte-Range seek stalls.');
+      setTimeout(() => {
+        addChaosLog('warn', 'Fallback activated: Exponential backoff with jitter applied (attempt 1/3, wait 48ms).');
+        addChaosLog('success', 'Served fallback stream chunk from local in-memory ring-buffer without drop.');
+      }, 400);
+    } else {
+      soundService.playSuccess();
+      addChaosLog('success', 'STORAGE RECOVERY: MinIO cluster recovered. All 206 partial responses optimal.');
+    }
+  };
 
   if (!isOpen || !project) return null;
 
@@ -34,13 +126,13 @@ export const ArchitectureTopologyModal: React.FC<ArchitectureTopologyModalProps>
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-xs font-mono text-[#0059e8]">
               <Layers className="w-3.5 h-3.5" />
-              <span>Architectural Blueprint &amp; Topology</span>
+              <span>Architectural Blueprint &amp; Systems Lab</span>
             </div>
             <h2 className="text-2xl font-bold text-slate-900 font-display">
               {project.title} · System Topology
             </h2>
-            <p className="text-xs text-slate-600 font-mono">
-              {project.category} · Inspect data flow contracts, caching tiers, and schema design.
+            <p className="text-xs text-slate-700 font-mono font-medium">
+              {project.category} · Inspect data flow contracts, caching tiers, and live fault injection.
             </p>
           </div>
 
@@ -53,13 +145,16 @@ export const ArchitectureTopologyModal: React.FC<ArchitectureTopologyModalProps>
         </div>
 
         {/* View Mode Switcher */}
-        <div className="flex items-center gap-2 p-1 rounded-xl bg-slate-100 border border-slate-200 w-fit">
+        <div className="flex flex-wrap items-center gap-2 p-1 rounded-xl bg-slate-100 border border-slate-200 w-fit">
           <button
-            onClick={() => setActiveMode('topology')}
+            onClick={() => {
+              setActiveMode('topology');
+              soundService.playClick(200, 0.02);
+            }}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-lg transition-colors cursor-pointer ${
               activeMode === 'topology'
                 ? 'bg-[#0059e8] text-white font-semibold shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                : 'text-slate-700 hover:text-slate-900'
             }`}
           >
             <Server className="w-3.5 h-3.5" />
@@ -67,11 +162,14 @@ export const ArchitectureTopologyModal: React.FC<ArchitectureTopologyModalProps>
           </button>
 
           <button
-            onClick={() => setActiveMode('dataflow')}
+            onClick={() => {
+              setActiveMode('dataflow');
+              soundService.playClick(220, 0.02);
+            }}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-lg transition-colors cursor-pointer ${
               activeMode === 'dataflow'
                 ? 'bg-[#0059e8] text-white font-semibold shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                : 'text-slate-700 hover:text-slate-900'
             }`}
           >
             <Network className="w-3.5 h-3.5" />
@@ -79,15 +177,33 @@ export const ArchitectureTopologyModal: React.FC<ArchitectureTopologyModalProps>
           </button>
 
           <button
-            onClick={() => setActiveMode('schema')}
+            onClick={() => {
+              setActiveMode('schema');
+              soundService.playClick(240, 0.02);
+            }}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-lg transition-colors cursor-pointer ${
               activeMode === 'schema'
                 ? 'bg-[#0059e8] text-white font-semibold shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                : 'text-slate-700 hover:text-slate-900'
             }`}
           >
             <Database className="w-3.5 h-3.5" />
             <span>Entity &amp; Index Schema</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveMode('chaos');
+              soundService.playClick(260, 0.02);
+            }}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono rounded-lg transition-colors cursor-pointer ${
+              activeMode === 'chaos'
+                ? 'bg-rose-600 text-white font-bold shadow-xs'
+                : 'text-rose-700 hover:text-rose-900 hover:bg-rose-50'
+            }`}
+          >
+            <Flame className="w-3.5 h-3.5 text-amber-300" />
+            <span>Chaos &amp; Packet Lab</span>
           </button>
         </div>
 
@@ -250,6 +366,136 @@ ON spatial_assets USING GIST (geom);
 CREATE INDEX idx_spatial_assets_tenant_status 
 ON spatial_assets (owner_id, status);`}
                 </pre>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Chaos Engineering & Packet Tracer Simulator */}
+        {activeMode === 'chaos' && (
+          <div className="space-y-4">
+            {/* Chaos Controls */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+              <button
+                onClick={toggleRedis}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer shadow-xs ${
+                  redisDown
+                    ? 'bg-rose-50 border-rose-400 text-rose-900'
+                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold">Redis Cluster</span>
+                  <span className={`w-2 h-2 rounded-full ${redisDown ? 'bg-rose-500 animate-ping' : 'bg-emerald-500'}`} />
+                </div>
+                <div className="text-xs font-bold mt-1">{redisDown ? 'Severed (Killed)' : 'Online (Healthy)'}</div>
+                <div className="text-[10px] text-slate-600 mt-0.5">Click to toggle crash</div>
+              </button>
+
+              <button
+                onClick={toggleLatency}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer shadow-xs ${
+                  highLatency
+                    ? 'bg-amber-50 border-amber-400 text-amber-900'
+                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold">WAN Jitter</span>
+                  <span className={`w-2 h-2 rounded-full ${highLatency ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`} />
+                </div>
+                <div className="text-xs font-bold mt-1">{highLatency ? '+250ms Injected' : '< 12ms Normal'}</div>
+                <div className="text-[10px] text-slate-600 mt-0.5">Click to inject lag</div>
+              </button>
+
+              <button
+                onClick={toggleS3}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer shadow-xs ${
+                  s3Throttled
+                    ? 'bg-rose-50 border-rose-400 text-rose-900'
+                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold">MinIO S3 Store</span>
+                  <span className={`w-2 h-2 rounded-full ${s3Throttled ? 'bg-rose-500 animate-ping' : 'bg-emerald-500'}`} />
+                </div>
+                <div className="text-xs font-bold mt-1">{s3Throttled ? '503 SlowDown' : 'Optimal'}</div>
+                <div className="text-[10px] text-slate-600 mt-0.5">Click to throttle</div>
+              </button>
+
+              <button
+                onClick={() => {
+                  soundService.playClick(240, 0.02);
+                  setPacketTracing(!packetTracing);
+                }}
+                className={`p-3 rounded-xl border text-left transition-all cursor-pointer shadow-xs ${
+                  packetTracing
+                    ? 'bg-blue-50 border-blue-400 text-[#0059e8]'
+                    : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold">Packet Tracer</span>
+                  <Activity className={`w-3.5 h-3.5 ${packetTracing ? 'text-[#0059e8] animate-spin' : 'text-slate-400'}`} />
+                </div>
+                <div className="text-xs font-bold mt-1">{packetTracing ? 'Tracer ACTIVE' : 'Tracer IDLE'}</div>
+                <div className="text-[10px] text-slate-600 mt-0.5">Click to start trace</div>
+              </button>
+            </div>
+
+            {/* Visual Live Packet Flow Stage */}
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+              <div className="flex items-center justify-between text-xs font-mono text-slate-700 font-bold">
+                <span>Active Packet Path</span>
+                <span className="text-[#0059e8] font-bold">
+                  {packetTracing ? `Tracing Step ${packetStep + 1} / 4` : 'Press "Packet Tracer" to animate'}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-4 gap-2 text-center text-xs font-mono">
+                <div className={`p-2.5 rounded-lg border transition-all ${packetStep === 0 && packetTracing ? 'bg-[#0059e8] text-white font-bold shadow-md scale-102' : 'bg-white border-slate-200 text-slate-700'}`}>
+                  <div className="text-[10px] opacity-80">01. INGRESS</div>
+                  <div className="font-bold text-xs truncate">Client Range</div>
+                </div>
+                <div className={`p-2.5 rounded-lg border transition-all ${packetStep === 1 && packetTracing ? 'bg-[#0059e8] text-white font-bold shadow-md scale-102' : 'bg-white border-slate-200 text-slate-700'}`}>
+                  <div className="text-[10px] opacity-80">02. EDGE</div>
+                  <div className="font-bold text-xs truncate">Token Check</div>
+                </div>
+                <div className={`p-2.5 rounded-lg border transition-all ${packetStep === 2 && packetTracing ? 'bg-[#0059e8] text-white font-bold shadow-md scale-102' : 'bg-white border-slate-200 text-slate-700'}`}>
+                  <div className="text-[10px] opacity-80">03. GO CORE</div>
+                  <div className="font-bold text-xs truncate">io.CopyN (64KB)</div>
+                </div>
+                <div className={`p-2.5 rounded-lg border transition-all ${packetStep === 3 && packetTracing ? 'bg-emerald-600 text-white font-bold shadow-md scale-102' : 'bg-white border-slate-200 text-slate-700'}`}>
+                  <div className="text-[10px] opacity-80">04. STORAGE</div>
+                  <div className="font-bold text-xs truncate">{redisDown ? 'PostgreSQL Fallback' : 'S3 / Cache'}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Real-Time Failover Telemetry Logs */}
+            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono space-y-2">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-800 text-slate-300">
+                <span className="flex items-center gap-2 text-emerald-400 font-bold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Chaos Engine Circuit Breaker Telemetry</span>
+                </span>
+                <span className="text-slate-400 text-[10px]">Auto-recovering</span>
+              </div>
+              <div className="space-y-1 max-h-40 overflow-y-auto font-mono text-[11px]">
+                {chaosLogs.map((log, lIdx) => (
+                  <div key={lIdx} className="flex items-start gap-2">
+                    <span className="text-slate-500 shrink-0">[{log.timestamp}]</span>
+                    <span className={`shrink-0 font-bold ${
+                      log.level === 'error' ? 'text-rose-400' :
+                      log.level === 'warn' ? 'text-amber-400' :
+                      log.level === 'success' ? 'text-emerald-400' : 'text-sky-300'
+                    }`}>
+                      {log.level.toUpperCase()}:
+                    </span>
+                    <span className="text-slate-200">{log.message}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

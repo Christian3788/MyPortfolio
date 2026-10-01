@@ -22,6 +22,8 @@ import { GithubSyncModal } from './components/GithubSyncModal';
 import { ResumeModal } from './components/ResumeModal';
 import { CommandPalette } from './components/CommandPalette';
 import { InteractiveTerminalModal } from './components/InteractiveTerminalModal';
+import { PeerReviewChallengeModal } from './components/PeerReviewChallengeModal';
+import { ArchitectureTopologyModal } from './components/ArchitectureTopologyModal';
 import { githubService } from './services/github';
 import { soundService } from './services/sound';
 import {
@@ -48,6 +50,8 @@ export default function App() {
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [isChallengeModalOpen, setIsChallengeModalOpen] = useState(false);
+  const [topologyProject, setTopologyProject] = useState<FeaturedProject | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
 
   // Synchronize data for given username
@@ -125,6 +129,7 @@ export default function App() {
         onOpenResumeModal={() => setIsResumeModalOpen(true)}
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onOpenTerminal={() => setIsTerminalOpen(true)}
+        onOpenChallenge={() => setIsChallengeModalOpen(true)}
         isSyncing={isSyncing}
       />
 
@@ -147,13 +152,16 @@ export default function App() {
         <FeaturedProjects
           projects={featuredProjects}
           onSelectProject={(proj) => setSelectedProject(proj)}
+          onOpenTopology={(proj) => setTopologyProject(proj)}
         />
 
         {/* 02. Interactive Systems Lab & Hardware Simulation */}
         <SystemsLabSection />
 
         {/* 03. Zone01 Peer Code Defense & Architecture Reviews */}
-        <PeerCodeDefenseSection />
+        <PeerCodeDefenseSection
+          onOpenChallenge={() => setIsChallengeModalOpen(true)}
+        />
 
         {/* 04. Live GitHub Repositories Grid (44 Public Repos) with Search & Language Filters */}
         <RepositoriesGrid
@@ -242,6 +250,8 @@ export default function App() {
         onSwitchPersona={(p) => {
           setPersona(p);
         }}
+        onOpenChallenge={() => setIsChallengeModalOpen(true)}
+        onOpenTopology={() => setTopologyProject(featuredProjects[0])}
       />
 
       {/* Interactive CLI Terminal Drawer */}
@@ -250,6 +260,19 @@ export default function App() {
         projects={featuredProjects}
         isOpen={isTerminalOpen}
         onClose={() => setIsTerminalOpen(false)}
+      />
+
+      {/* Zone01 Peer Review Code Challenge Modal */}
+      <PeerReviewChallengeModal
+        isOpen={isChallengeModalOpen}
+        onClose={() => setIsChallengeModalOpen(false)}
+      />
+
+      {/* Direct System Architecture Topology & Chaos Lab Modal */}
+      <ArchitectureTopologyModal
+        project={topologyProject}
+        isOpen={!!topologyProject}
+        onClose={() => setTopologyProject(null)}
       />
 
     </div>

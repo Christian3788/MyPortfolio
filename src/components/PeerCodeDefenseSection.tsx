@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import { ShieldCheck, GitPullRequest, CheckCircle2, MessageSquare, ArrowRight, Code, Terminal, Check, Copy, Split, AlignLeft, Sparkles } from 'lucide-react';
+import { ShieldCheck, GitPullRequest, CheckCircle2, MessageSquare, ArrowRight, Code, Terminal, Check, Copy, Split, AlignLeft, Sparkles, Trophy } from 'lucide-react';
 import { soundService } from '../services/sound';
+
+interface PeerCodeDefenseSectionProps {
+  onOpenChallenge?: () => void;
+}
 
 interface DefenseItem {
   id: string;
@@ -131,7 +135,9 @@ ORDER BY dist ASC LIMIT 20;`,
   },
 ];
 
-export const PeerCodeDefenseSection: React.FC = () => {
+export const PeerCodeDefenseSection: React.FC<PeerCodeDefenseSectionProps> = ({
+  onOpenChallenge,
+}) => {
   const [activeTab, setActiveTab] = useState<string>('pr-1');
   const [diffMode, setDiffMode] = useState<'split' | 'unified'>('split');
   const [copied, setCopied] = useState<boolean>(false);
@@ -165,9 +171,23 @@ export const PeerCodeDefenseSection: React.FC = () => {
               Architecture &amp; Code Defense Replay
             </h2>
           </div>
-          <p className="text-sm text-slate-700 font-medium max-w-md">
-            At Zone01, code is never committed in isolation. Every core feature is defended live before peer review panels through rigorous algorithmic justification and benchmark proof.
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+            <p className="text-sm text-slate-700 font-medium max-w-md">
+              At Zone01, code is never committed in isolation. Every core feature is defended live before peer review panels through rigorous algorithmic justification.
+            </p>
+            {onOpenChallenge && (
+              <button
+                onClick={() => {
+                  soundService.playClick(260, 0.02);
+                  onOpenChallenge();
+                }}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-[#0059e8] hover:text-[#0048c4] border border-blue-200 text-xs font-mono font-bold transition-all shadow-2xs whitespace-nowrap cursor-pointer shrink-0"
+              >
+                <Trophy className="w-3.5 h-3.5 text-amber-500" />
+                <span>Peer Review Quiz</span>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Defense Replay Card Container */}
