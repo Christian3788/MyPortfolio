@@ -3,6 +3,7 @@ import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 dotenv.config();
@@ -13,7 +14,30 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: '15mb' }));
+
+// Studio Profile Portrait Upload endpoint
+app.post('/api/upload-studio-portrait', (req, res) => {
+  try {
+    const { dataUrl } = req.body;
+    if (!dataUrl || typeof dataUrl !== 'string') {
+      return res.status(400).json({ error: 'Missing or invalid dataUrl' });
+    }
+    const base64Data = dataUrl.replace(/^data:image\/\w+;base64,/, '');
+    const buffer = Buffer.from(base64Data, 'base64');
+    const targetPath = path.join(__dirname, 'public', 'christian_profile_studio.jpg');
+    fs.writeFileSync(targetPath, buffer);
+
+    const distPath = path.join(__dirname, 'dist', 'christian_profile_studio.jpg');
+    if (fs.existsSync(path.join(__dirname, 'dist'))) {
+      fs.writeFileSync(distPath, buffer);
+    }
+    return res.json({ success: true, url: '/christian_profile_studio.jpg?t=' + Date.now() });
+  } catch (err: unknown) {
+    console.error('Error saving studio portrait:', err);
+    return res.status(500).json({ error: 'Failed to write studio portrait' });
+  }
+});
 
 // Initialize Gemini Client with aistudio-build User-Agent
 const apiKey = process.env.GEMINI_API_KEY;

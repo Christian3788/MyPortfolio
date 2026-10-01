@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Github, Linkedin, Send, Check, MapPin, Building, Calendar, ArrowUpRight, Clock, Globe, Sparkles, CheckCircle2, Bell, Newspaper, ShieldCheck, Loader2 } from 'lucide-react';
+import { Mail, Github, Linkedin, Send, Check, MapPin, Building, Calendar, ArrowUpRight, Clock, Globe, Sparkles, CheckCircle2, Bell, Newspaper, ShieldCheck, Loader2, ZoomIn, X, Download } from 'lucide-react';
 import { GithubUser } from '../types/github';
 import { soundService } from '../services/sound';
 import { ContactQrCodeWidget } from './ContactQrCodeWidget';
@@ -14,6 +14,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ user }) => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [isPhotoLightboxOpen, setIsPhotoLightboxOpen] = useState(false);
 
   // Newsletter Subscription States
   const [newsletterEmail, setNewsletterEmail] = useState('');
@@ -199,48 +200,66 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ user }) => {
 
             {/* Direct Connect Information */}
             <div className="space-y-3.5 pt-2 border-t border-slate-200/80">
-              {/* Personal Engineer Snapshot Card with Studio Silhouette & Daylight Switch */}
-              <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-[0_4px_20px_-4px_rgba(0,89,232,0.06)] space-y-3.5">
-                <div className="flex items-center gap-3.5">
-                  <div className="relative w-16 h-20 rounded-xl overflow-hidden bg-slate-950 border-2 border-slate-800 shadow-md shrink-0 group">
+              {/* Personal Engineer Snapshot Card with 2nd Studio Silhouette Portrait */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/90 shadow-[0_4px_24px_-4px_rgba(0,89,232,0.08)] space-y-4">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                  {/* Portrait Frame with Studio Silhouette Image */}
+                  <div
+                    onClick={() => {
+                      soundService.playClick(260, 0.02);
+                      setIsPhotoLightboxOpen(true);
+                    }}
+                    className="relative w-24 h-32 sm:w-28 sm:h-36 rounded-2xl overflow-hidden bg-slate-950 border-2 border-slate-800 shadow-lg shrink-0 group cursor-pointer"
+                    title="Click to view full-resolution portrait"
+                  >
                     <img
                       src="/christian_profile_studio.jpg"
                       alt={user.name || 'Christian Amos Otieno'}
-                      className="w-full h-full object-cover object-[50%_25%] contrast-[1.12] group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover object-[50%_25%] contrast-[1.12] transition-transform duration-500 group-hover:scale-105"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = '/IMG_20260926_072914.jpg';
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
-                    <span className="absolute bottom-1 left-1 right-1 text-center text-[8px] font-mono text-slate-300 font-bold bg-slate-900/90 rounded px-1">
-                      STUDIO
+                    
+                    {/* Hover expand prompt */}
+                    <div className="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-[10px] font-mono font-bold gap-1 backdrop-blur-2xs">
+                      <ZoomIn className="w-4 h-4 text-[#38bdf8]" />
+                      <span>Inspect</span>
+                    </div>
+
+                    <span className="absolute bottom-1.5 left-1.5 right-1.5 text-center text-[9px] font-mono text-slate-200 font-bold bg-slate-900/90 rounded px-1 py-0.5 border border-slate-700/60">
+                      STUDIO SILHOUETTE
                     </span>
                   </div>
 
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-bold text-slate-900 font-display">
+                  <div className="space-y-2 flex-1 text-center sm:text-left">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                      <span className="text-base font-bold text-slate-900 font-display">
                         {user.name || 'Christian Amos Otieno'}
                       </span>
                       <span className="text-[10px] font-mono text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300 font-bold">
-                        AVAILABLE
+                        ACTIVE · AVAILABLE
                       </span>
                     </div>
-                    <div className="text-xs text-[#0059e8] font-mono font-semibold">
+                    
+                    <div className="text-xs text-[#0059e8] font-mono font-bold">
                       Senior Systems &amp; Backend Engineer
                     </div>
-                    <p className="text-[11px] text-slate-700 font-sans leading-snug">
-                      Zone01 Kisumu Peer-Defended · B.Sc. Aga Khan Univ
+                    
+                    <p className="text-xs text-slate-700 font-sans leading-relaxed">
+                      Zone01 Kisumu Peer-Defended · B.Sc. Aga Khan University
                     </p>
-                    <div className="flex items-center gap-1.5 text-[11px] text-slate-800 font-medium pt-0.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+
+                    <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-slate-800 font-medium pt-0.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                       <span>Direct response within 24h · EAT (UTC+3)</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono text-slate-700">
-                  <span>Remote Friendly (UTC-5 to UTC+4)</span>
+                <div className="pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-slate-700">
+                  <span className="text-slate-600">Remote Friendly (UTC-5 to UTC+4)</span>
                   <a
                     href="mailto:christianamos67@gmail.com"
                     className="text-[#0059e8] font-bold hover:underline"
@@ -662,6 +681,56 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ user }) => {
           </div>
         </div>
       </div>
+      {/* Portrait Lightbox Modal */}
+      {isPhotoLightboxOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setIsPhotoLightboxOpen(false)}
+        >
+          <div
+            className="relative max-w-lg w-full bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl space-y-4 p-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="space-y-0.5">
+                <h4 className="text-base font-bold text-white font-display">
+                  Studio Silhouette Portrait
+                </h4>
+                <p className="text-xs text-slate-400 font-mono">
+                  {user.name || 'Christian Amos Otieno'} · Senior Systems Engineer
+                </p>
+              </div>
+              <button
+                onClick={() => setIsPhotoLightboxOpen(false)}
+                className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="relative aspect-[3/3.8] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800">
+              <img
+                src="/christian_profile_studio.jpg"
+                alt={user.name || 'Christian Amos Otieno'}
+                className="w-full h-full object-cover object-[50%_25%]"
+              />
+            </div>
+
+            <div className="flex items-center justify-end pt-2">
+              <a
+                href="/christian_profile_studio.jpg"
+                download="Christian_Amos_Otieno_Studio.jpg"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#0059e8] hover:bg-[#0047ba] text-white text-xs font-mono font-bold transition-colors cursor-pointer shadow-sm"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Download Photo</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

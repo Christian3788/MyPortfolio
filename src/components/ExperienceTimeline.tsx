@@ -33,8 +33,10 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ history 
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-center relative z-10">
             {/* Left: Studio Monochrome Portrait */}
-            <div className="md:col-span-4 lg:col-span-3 flex justify-center md:justify-start">
-              <div className="relative aspect-square w-44 sm:w-48 rounded-2xl overflow-hidden bg-slate-950 border-2 border-slate-700 shadow-2xl group">
+            <div className="md:col-span-4 lg:col-span-3 flex flex-col items-center md:items-start gap-2.5">
+              <div 
+                className="relative aspect-square w-44 sm:w-48 rounded-2xl overflow-hidden bg-slate-950 border-2 border-slate-700 shadow-2xl group"
+              >
                 <img
                   src="/christian_profile_studio.jpg"
                   alt="Christian Amos Otieno · Systems Engineering Focus"
@@ -45,6 +47,7 @@ export const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ history 
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+
                 <div className="absolute bottom-2 left-2 right-2 text-center text-[10px] font-mono text-slate-300 font-bold bg-slate-900/80 backdrop-blur-xs py-1 px-2 rounded-md border border-slate-700">
                   Late-Night Systems Rigor
                 </div>

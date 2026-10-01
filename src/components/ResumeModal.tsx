@@ -224,11 +224,11 @@ EDUCATION & CREDENTIALS
 
         {/* Resume Header */}
         <div className="flex flex-col sm:flex-row items-start gap-6 border-b border-slate-200 pb-6 print:border-black/20">
-          <div className="relative w-24 h-32 sm:w-28 sm:h-36 rounded-xl overflow-hidden bg-slate-100 border border-slate-300 print:border-black/30 shrink-0 shadow-sm">
+          <div className="relative w-24 h-32 sm:w-28 sm:h-36 rounded-xl overflow-hidden bg-slate-950 border border-slate-300 print:border-black/30 shadow-sm shrink-0">
             <img
-              src="/IMG_20260926_072914.jpg"
+              src="/christian_profile_studio.jpg"
               alt={user.name || 'Christian Amos Otieno'}
-              className="w-full h-full object-cover object-[50%_15%]"
+              className="w-full h-full object-cover object-[50%_25%] contrast-[1.12]"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = '/profile.jpg';
               }}
